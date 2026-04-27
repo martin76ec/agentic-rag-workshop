@@ -2,6 +2,7 @@
 """Run an incident through the triage pipeline end-to-end."""
 
 import sys
+import time
 
 from dotenv import load_dotenv
 from rich.console import Console
@@ -10,10 +11,23 @@ from rich.table import Table
 
 from src.agents.graph import compile_triage_graph
 from src.infrastructure.mock_apis import generate_incident, generate_random_incident
-from src.infrastructure.models import Incident
-from src.observability.decorators import init_agentops
+from src.infrastructure.models import BlastRadiusReport, Incident
+from src.observability.decorators import (
+    begin_session,
+    end_session,
+    init_agentops,
+    record_node_event,
+)
 
 console = Console()
+
+NODE_STYLES = {
+    "triage": ("yellow", "Triage Agent"),
+    "router": ("blue", "Router Agent"),
+    "specialist": ("green", "Specialist Agent"),
+}
+NODE_ORDER = ["triage", "router", "specialist"]
+_SKIP = {"messages", "incident"}
 
 
 def display_incident(incident: Incident) -> None:
@@ -28,37 +42,53 @@ def display_incident(incident: Incident) -> None:
     ))
 
 
-def display_triage_result(state: dict) -> None:
+def _fmt(val) -> str:
+    if val is None:
+        return "[dim]—[/]"
+    if hasattr(val, "value"):
+        return str(val.value)
+    s = str(val)
+    return s[:400] + "[dim]…[/]" if len(s) > 400 else s
+
+
+def display_node_output(node_name: str, state_delta: dict, elapsed: float) -> None:
+    color, label = NODE_STYLES.get(node_name, ("white", node_name.title()))
+
+    table = Table(show_header=False, box=None, padding=(0, 1), expand=True)
+    table.add_column("Field", style=f"bold {color}", min_width=26, no_wrap=True)
+    table.add_column("Value", overflow="fold")
+
+    for key, val in state_delta.items():
+        if key in _SKIP:
+            continue
+        if key == "blast_radius_report" and isinstance(val, BlastRadiusReport):
+            table.add_row(
+                key,
+                f"root=[bold]{val.root_service}[/]  "
+                f"impact=[bold]{val.estimated_impact.value}[/]  "
+                f"affected={len(val.affected_services)} services  "
+                f"depts={', '.join(str(d) for d in val.affected_departments)}",
+            )
+        else:
+            table.add_row(key, _fmt(val))
+
     console.print(Panel(
-        state.get("triage_classification", "No classification"),
-        title="[bold yellow]Triage Classification[/]",
-        border_style="yellow",
+        table,
+        title=f"[bold {color}]{label}[/]  [dim]{elapsed:.1f}s[/]",
+        border_style=color,
     ))
 
-    routing = state.get("routing_decision", "Not routed")
-    console.print(Panel(routing, title="[bold blue]Routing Decision[/]", border_style="blue"))
 
-    blast = state.get("blast_radius_report")
-    if blast:
-        table = Table(title="Blast Radius Report")
-        table.add_column("Field", style="bold")
-        table.add_column("Value")
-        table.add_row("Root Service", blast.root_service)
-        table.add_row("Estimated Impact", blast.estimated_impact.value)
-        table.add_row("Affected Services", ", ".join(blast.affected_services) or "None")
-        table.add_row("Affected Departments", ", ".join(d.value for d in blast.affected_departments))
-        table.add_row("Propagation Paths", str(len(blast.propagation_paths)))
-        table.add_row("Recommended Actions", "\n".join(blast.recommended_actions) or "None")
-        console.print(table)
-
-    analysis = state.get("specialist_analysis", "")
-    if analysis:
-        console.print(Panel(analysis, title="[bold green]Specialist Analysis[/]", border_style="green"))
+def _print_node_rule(node_idx: int) -> None:
+    if node_idx < len(NODE_ORDER):
+        color, label = NODE_STYLES[NODE_ORDER[node_idx]]
+        console.rule(f"[{color}]Running {label}…[/]")
 
 
 def main() -> None:
     load_dotenv()
     init_agentops()
+    session = begin_session()
 
     if len(sys.argv) > 1:
         service_name = sys.argv[1]
@@ -68,12 +98,10 @@ def main() -> None:
         incident = generate_random_incident()
 
     display_incident(incident)
-
-    console.print("\n[bold]Running triage pipeline...[/]\n")
+    console.print()
 
     graph = compile_triage_graph()
-
-    result = graph.invoke({
+    initial_state = {
         "messages": [],
         "incident": incident,
         "service_name": "",
@@ -84,10 +112,30 @@ def main() -> None:
         "final_report": "",
         "triage_classification": "",
         "routing_decision": "",
-    })
+    }
 
-    display_triage_result(result)
-    console.print("\n[bold green]Triage complete![/]")
+    node_idx = 0
+    t_prev = time.time()
+    _print_node_rule(node_idx)
+
+    try:
+        for chunk in graph.stream(initial_state):
+            t_now = time.time()
+            node_name, state_delta = next(iter(chunk.items()))
+            elapsed = t_now - t_prev
+            display_node_output(node_name, state_delta, elapsed)
+            record_node_event(node_name, state_delta, elapsed)
+            t_prev = t_now
+            node_idx += 1
+            console.print()
+            _print_node_rule(node_idx)
+        end_session(session, success=True)
+    except Exception as exc:
+        console.print(f"\n[bold red]Pipeline error:[/] {exc}")
+        end_session(session, success=False)
+        raise
+
+    console.print("[bold green]Triage complete.[/]")
 
 
 if __name__ == "__main__":

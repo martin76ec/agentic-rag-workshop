@@ -8,7 +8,7 @@ from rich.table import Table
 
 from src.infrastructure.topology import SERVICES
 from src.memory.config import get_memory
-from src.memory.graph import seed_department_knowledge, seed_infrastructure
+from src.memory.graph import seed_department_knowledge, seed_infrastructure, seed_neo4j_graph
 
 console = Console()
 
@@ -34,6 +34,13 @@ def main() -> None:
     dept_results = seed_department_knowledge(memory)
     for dept, result in dept_results.items():
         console.print(f"  [green]✓[/] {dept}")
+
+    console.print("\n[bold]Seeding Neo4j knowledge graph...[/]")
+    graph_stats = seed_neo4j_graph()
+    console.print(
+        f"  [green]✓[/] {graph_stats['nodes']} nodes  "
+        f"[green]✓[/] {graph_stats['relationships']} relationships"
+    )
 
     console.print("\n[bold green]Infrastructure seeding complete![/]")
 

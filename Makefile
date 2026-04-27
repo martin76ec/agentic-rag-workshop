@@ -3,21 +3,32 @@
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-12s\033[0m %s\n", $$1, $$2}'
 
-setup: ## Full dev setup (venv + deps + Qdrant + .env)
+setup: ## Full dev setup (venv + deps + Qdrant + Neo4j + .env)
 	uv venv && uv sync
-	docker compose up -d qdrant
+	docker compose up -d qdrant neo4j
 	@echo "Waiting for Qdrant..."
 	@for i in $$(seq 1 30); do \
 		if curl -s http://localhost:6333/healthz | grep -q ok; then echo "Qdrant ready!"; break; fi; \
 		sleep 1; \
 	done
+	@echo "Waiting for Neo4j..."
+	@for i in $$(seq 1 30); do \
+		if curl -s http://localhost:7474 > /dev/null 2>&1; then echo "Neo4j ready!"; break; fi; \
+		sleep 2; \
+	done
 	@test -f .env || cp .env.example .env
 
-dev: ## Start Qdrant in background
-	docker compose up -d qdrant
+dev: ## Start Qdrant and Neo4j in background
+	docker compose up -d qdrant neo4j
+
+browse-graph: ## Open Neo4j browser UI
+	open http://localhost:7474
 
 seed: ## Seed infrastructure topology into Mem0
 	uv run python scripts/seed_infrastructure.py
+
+inspect-mem: ## Show all documents stored in Mem0/Qdrant
+	uv run python scripts/inspect_mem.py
 
 incident: ## Run incident triage (optionally pass SERVICE=name)
 	uv run python scripts/run_incident.py $(filter-out $@,$(MAKECMDGOALS))

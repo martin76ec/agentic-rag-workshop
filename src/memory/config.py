@@ -1,6 +1,8 @@
 import os
 
 from mem0 import Memory
+from neo4j import GraphDatabase
+from neo4j import Driver
 
 COLLECTION_NAME = "infrastructure_topology"
 
@@ -8,6 +10,10 @@ OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 OLLAMA_LLM_MODEL = os.getenv("OLLAMA_LLM_MODEL", "gemma4:31b-cloud")
 OLLAMA_EMBEDDING_MODEL = os.getenv("OLLAMA_EMBEDDING_MODEL", "nomic-embed-text-v2-moe:latest")
 OLLAMA_EMBEDDING_DIMS = int(os.getenv("OLLAMA_EMBEDDING_DIMS", "768"))
+
+NEO4J_URL = os.getenv("NEO4J_URL", "bolt://localhost:7687")
+NEO4J_USERNAME = os.getenv("NEO4J_USERNAME", "neo4j")
+NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "password")
 
 
 def get_memory() -> Memory:
@@ -40,7 +46,11 @@ def get_memory() -> Memory:
                 "embedding_dims": OLLAMA_EMBEDDING_DIMS,
             },
         },
-        "version": "v2.1",
+        "version": "v1.1",
     }
 
     return Memory.from_config(config)
+
+
+def get_neo4j_driver() -> Driver:
+    return GraphDatabase.driver(NEO4J_URL, auth=(NEO4J_USERNAME, NEO4J_PASSWORD))

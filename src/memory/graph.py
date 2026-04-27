@@ -1,8 +1,9 @@
 from mem0 import Memory
+from neo4j import Driver
 
 from src.infrastructure.models import Department, Service
 from src.infrastructure.topology import SERVICES, get_dependents
-from src.memory.config import get_memory
+from src.memory.config import get_memory, get_neo4j_driver
 
 
 def service_to_memory_content(service: Service) -> str:
@@ -46,7 +47,7 @@ def seed_infrastructure(memory: Memory | None = None) -> dict[str, str]:
             content,
             user_id="infrastructure",
             metadata=metadata,
-            infer=False,
+            infer=True,
         )
         results[service.name] = result
 
@@ -113,6 +114,53 @@ def seed_department_knowledge(memory: Memory | None = None) -> dict[str, str]:
         results[dept.value] = result
 
     return results
+
+
+def seed_neo4j_graph(driver: Driver | None = None) -> dict[str, int]:
+    if driver is None:
+        driver = get_neo4j_driver()
+
+    with driver.session() as session:
+        session.run("MATCH (n) DETACH DELETE n")
+
+        for service in SERVICES:
+            session.run(
+                """
+                MERGE (s:Service {name: $name})
+                SET s.department = $department,
+                    s.tier = $tier,
+                    s.region = $region,
+                    s.description = $description,
+                    s.sla_minutes = $sla_minutes,
+                    s.tags = $tags
+                MERGE (d:Department {name: $department})
+                MERGE (s)-[:BELONGS_TO]->(d)
+                """,
+                name=service.name,
+                department=service.department.value,
+                tier=service.tier,
+                region=service.region,
+                description=service.description,
+                sla_minutes=service.sla_minutes,
+                tags=service.tags,
+            )
+
+        for service in SERVICES:
+            for dep_name in service.depends_on:
+                session.run(
+                    """
+                    MATCH (a:Service {name: $source}), (b:Service {name: $target})
+                    MERGE (a)-[:DEPENDS_ON]->(b)
+                    """,
+                    source=service.name,
+                    target=dep_name,
+                )
+
+        node_count = session.run("MATCH (n) RETURN count(n) AS c").single()["c"]
+        rel_count = session.run("MATCH ()-[r]->() RETURN count(r) AS c").single()["c"]
+
+    driver.close()
+    return {"nodes": node_count, "relationships": rel_count}
 
 
 def search_services(memory: Memory, query: str, limit: int = 5) -> list[dict]:
