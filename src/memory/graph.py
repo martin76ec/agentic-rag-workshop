@@ -118,8 +118,8 @@ def seed_department_knowledge(memory: Memory | None = None) -> dict[str, str]:
 def search_services(memory: Memory, query: str, limit: int = 5) -> list[dict]:
     results = memory.search(
         query,
-        user_id="infrastructure",
-        limit=limit,
+        filters={"user_id": "infrastructure"},
+        top_k=limit,
     )
     return [r for r in results.get("results", []) if r.get("metadata", {}).get("type") == "service"]
 
@@ -127,8 +127,8 @@ def search_services(memory: Memory, query: str, limit: int = 5) -> list[dict]:
 def get_service_memory(memory: Memory, service_name: str) -> dict | None:
     results = memory.search(
         f"Service: {service_name}",
-        user_id="infrastructure",
-        limit=1,
+        filters={"user_id": "infrastructure"},
+        top_k=1,
     )
     hits = results.get("results", [])
     for hit in hits:
