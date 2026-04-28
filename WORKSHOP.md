@@ -17,6 +17,10 @@
 <img src="https://img.shields.io/badge/🧠%20level-intermediate-EC4899?style=for-the-badge&labelColor=0f0f1e" alt="level"/>
 <img src="https://img.shields.io/badge/🛠%20prereq-make%20setup%20%26%26%20make%20seed-F43F5E?style=for-the-badge&labelColor=0f0f1e" alt="prereqs"/>
 
+<br/>
+
+<a href="WORKSHOP.es.md"><img src="https://img.shields.io/badge/🇪🇸%20Leer%20en%20Español-1a1a2e?style=for-the-badge&labelColor=0f0f1e" alt="Leer en Español"/></a>
+
 <br/><br/>
 
 <!-- ─── one-line emoji TOC ──────────────────────────────────────────────── -->

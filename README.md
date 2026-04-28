@@ -326,7 +326,10 @@ it keeps the project visible and motivates the next chapter.
   <img src="https://img.shields.io/badge/🍴_Fork_&_remix-06B6D4?style=for-the-badge&labelColor=0f0f1e" alt="Fork & remix"/>
 </a>
 <a href="WORKSHOP.md">
-  <img src="https://img.shields.io/badge/📖_Open_workshop-EC4899?style=for-the-badge&labelColor=0f0f1e" alt="Open workshop"/>
+  <img src="https://img.shields.io/badge/📖_Workshop_(EN)-EC4899?style=for-the-badge&labelColor=0f0f1e" alt="Workshop EN"/>
+</a>
+<a href="WORKSHOP.es.md">
+  <img src="https://img.shields.io/badge/📖_Taller_(ES)-F43F5E?style=for-the-badge&labelColor=0f0f1e" alt="Taller ES"/>
 </a>
 
 </div>
