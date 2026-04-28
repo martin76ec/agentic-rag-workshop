@@ -1,8 +1,7 @@
 import os
 
 from mem0 import Memory
-from neo4j import GraphDatabase
-from neo4j import Driver
+from neo4j import Driver, GraphDatabase
 
 COLLECTION_NAME = "infrastructure_topology"
 

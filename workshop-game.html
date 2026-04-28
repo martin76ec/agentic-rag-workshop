@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Operación Kafka — Misión RAG Agéntico</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --night:    #07070f;
+    --night-2:  #0f0f1e;
+    --panel:    #14142a;
+    --panel-2:  #1a1a2e;
+    --line:     #2a2a44;
+    --text:     #e6e6f0;
+    --muted:    #8a8aa8;
+    --violet:   #8B5CF6;
+    --cyan:     #06B6D4;
+    --pink:     #EC4899;
+    --rose:     #F43F5E;
+    --amber:    #F59E0B;
+    --green:    #22C55E;
+    --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+    --display: 'Space Grotesk', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--mono);
+    color: var(--text);
+    background:
+      radial-gradient(1200px 800px at 80% -10%, rgba(139,92,246,.08), transparent 60%),
+      radial-gradient(1000px 700px at -10% 100%, rgba(6,182,212,.08), transparent 60%),
+      linear-gradient(180deg, var(--night) 0%, var(--night-2) 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.015) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,.012) 0,
+      rgba(255,255,255,.012) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    pointer-events: none;
+    z-index: 0;
+    mix-blend-mode: overlay;
+  }
+
+  /* HUD */
+  .hud {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(12px);
+    background: rgba(7,7,15,.78);
+    border-bottom: 1px solid var(--line);
+  }
+  .hud-inner {
+    max-width: 1280px; margin: 0 auto;
+    padding: 12px 28px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center; gap: 24px;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 12px;
+    font-family: var(--display);
+    font-weight: 700;
+    letter-spacing: -.01em;
+  }
+  .brand .dot {
+    width: 10px; height: 10px;
+    background: var(--rose);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--rose), 0 0 24px var(--rose);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: .55; transform: scale(.85); }
+  }
+  .brand .title { font-size: 15px; }
+  .brand .title b { color: var(--rose); }
+  .progress-wrap { display: flex; align-items: center; gap: 14px; }
+  .progress-bar {
+    position: relative; flex: 1; height: 8px;
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 2px; overflow: hidden;
+  }
+  .progress-fill {
+    position: absolute; inset: 0; width: 0%;
+    background: linear-gradient(90deg, var(--cyan), var(--violet) 50%, var(--pink));
+    transition: width .4s cubic-bezier(.2,.8,.2,1);
+    box-shadow: 0 0 18px rgba(139,92,246,.5);
+  }
+  .progress-label {
+    font-size: 11px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--muted);
+    min-width: 110px;
+  }
+  .progress-label b { color: var(--text); font-weight: 700; }
+  .stats {
+    display: flex; gap: 14px;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .stats .chip {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 10px;
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 2px;
+  }
+  .stats .chip b { color: var(--text); font-weight: 700; }
+  .stats .chip.xp b { color: var(--amber); }
+  .stats .chip.lvl b { color: var(--cyan); }
+  .stats .chip.badges b { color: var(--pink); }
+
+  .wrap {
+    position: relative; z-index: 1;
+    max-width: 1100px; margin: 0 auto;
+    padding: 56px 28px 120px;
+  }
+
+  /* Briefing hero */
+  .hero {
+    position: relative;
+    border: 1px solid var(--line);
+    background:
+      linear-gradient(135deg, rgba(244,63,94,.06), transparent 60%),
+      var(--panel-2);
+    padding: 36px 36px 32px;
+    margin-bottom: 56px;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--rose), var(--pink), var(--violet));
+  }
+  .hero .corner { position: absolute; width: 14px; height: 14px; border: 1px solid var(--rose); }
+  .hero .corner.tl { top: 10px; left: 12px; border-right: none; border-bottom: none; }
+  .hero .corner.tr { top: 10px; right: 10px; border-left: none; border-bottom: none; }
+  .hero .corner.bl { bottom: 10px; left: 12px; border-right: none; border-top: none; }
+  .hero .corner.br { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+  .hero .tag {
+    display: inline-block;
+    font-size: 10px; letter-spacing: .28em; text-transform: uppercase;
+    color: var(--rose); margin-bottom: 14px;
+    padding: 4px 8px;
+    background: rgba(244,63,94,.08); border: 1px solid rgba(244,63,94,.3);
+  }
+  .hero h1 {
+    font-family: var(--display);
+    font-size: clamp(36px, 6vw, 60px);
+    font-weight: 700; line-height: 1; letter-spacing: -.025em;
+    margin: 0 0 8px;
+  }
+  .hero h1 .accent {
+    background: linear-gradient(90deg, var(--rose), var(--pink), var(--violet));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero .subtitle {
+    color: var(--muted); font-size: 15px;
+    max-width: 720px; margin: 0 0 24px; line-height: 1.6;
+  }
+  .hero .briefing {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 18px; align-items: start;
+    padding: 18px;
+    background: var(--night); border: 1px solid var(--line);
+    margin-top: 8px;
+  }
+  .hero .briefing .icon {
+    width: 56px; height: 56px;
+    display: grid; place-items: center;
+    background: var(--panel); border: 1px solid var(--rose);
+    color: var(--rose); font-size: 22px; font-weight: 700;
+  }
+  .hero .briefing p { margin: 0; line-height: 1.7; font-size: 14px; }
+  .hero .briefing p code {
+    color: var(--cyan); background: rgba(6,182,212,.08);
+    padding: 1px 6px; border: 1px solid rgba(6,182,212,.25);
+  }
+  .hero .meta {
+    display: flex; gap: 14px; flex-wrap: wrap; margin-top: 22px;
+    font-size: 12px; color: var(--muted);
+    letter-spacing: .1em; text-transform: uppercase;
+  }
+  .hero .meta span { display: flex; align-items: center; gap: 8px; }
+  .hero .meta b { color: var(--text); font-weight: 700; }
+  .hero .meta .sep { width: 1px; background: var(--line); }
+
+  /* Track header */
+  .track-head {
+    margin: 70px 0 22px;
+    display: flex; align-items: baseline; gap: 16px;
+  }
+  .track-head .num {
+    font-family: var(--display);
+    font-size: 13px; color: var(--muted);
+    letter-spacing: .25em; text-transform: uppercase;
+  }
+  .track-head h2 {
+    font-family: var(--display);
+    font-size: 30px; font-weight: 700;
+    letter-spacing: -.01em; margin: 0;
+  }
+  .track-head h2 .a { color: var(--cyan); }
+  .track-head h2 .b { color: var(--pink); }
+  .track-head .line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--line), transparent); }
+  .track-head .summary {
+    font-size: 12px; color: var(--muted);
+    letter-spacing: .1em; text-transform: uppercase;
+  }
+  .track-head .summary b { color: var(--text); font-weight: 700; }
+
+  /* Stage card */
+  .stages { display: flex; flex-direction: column; gap: 14px; }
+  .stage {
+    position: relative;
+    border: 1px solid var(--line);
+    background: var(--panel-2);
+    transition: border-color .25s, transform .25s;
+  }
+  .stage::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; background: var(--line);
+    transition: background .3s;
+  }
+  .stage[data-color="violet"]::before { background: var(--violet); }
+  .stage[data-color="cyan"]::before   { background: var(--cyan); }
+  .stage[data-color="pink"]::before   { background: var(--pink); }
+  .stage[data-color="rose"]::before   { background: var(--rose); }
+  .stage[data-color="amber"]::before  { background: var(--amber); }
+
+  .stage.locked { opacity: .42; filter: grayscale(.6); }
+  .stage.locked .stage-head { cursor: not-allowed; }
+  .stage.completed::before {
+    background: var(--green);
+    box-shadow: 0 0 18px rgba(34,197,94,.4);
+  }
+  .stage.completed { border-color: rgba(34,197,94,.35); }
+  .stage.partial::before {
+    background: linear-gradient(180deg, var(--amber), var(--green));
+  }
+
+  .stage-head {
+    display: grid;
+    grid-template-columns: 64px 1fr auto auto;
+    align-items: center;
+    gap: 20px;
+    padding: 22px 24px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .stage-num {
+    font-family: var(--display);
+    font-size: 28px; font-weight: 800;
+    color: var(--muted);
+    letter-spacing: -.02em;
+    text-align: center;
+  }
+  .stage[data-color="violet"] .stage-num { color: var(--violet); }
+  .stage[data-color="cyan"]   .stage-num { color: var(--cyan); }
+  .stage[data-color="pink"]   .stage-num { color: var(--pink); }
+  .stage[data-color="rose"]   .stage-num { color: var(--rose); }
+  .stage[data-color="amber"]  .stage-num { color: var(--amber); }
+
+  .stage-title { display: flex; flex-direction: column; gap: 4px; }
+  .stage-title .kicker {
+    font-size: 10px; letter-spacing: .25em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .stage-title h3 {
+    font-family: var(--display);
+    font-size: 20px; font-weight: 700;
+    margin: 0; letter-spacing: -.01em;
+  }
+  .stage-title .desc {
+    font-size: 13px; color: var(--muted); margin-top: 4px;
+  }
+  .stage-meta {
+    display: flex; flex-direction: column; gap: 6px;
+    align-items: flex-end;
+    font-size: 11px; color: var(--muted);
+    letter-spacing: .08em; text-transform: uppercase;
+  }
+  .stage-meta .row { display: flex; gap: 10px; align-items: center; }
+  .stage-meta .row b { color: var(--text); font-weight: 700; }
+  .stage-meta .stars { letter-spacing: 2px; color: var(--amber); font-size: 13px; }
+  .stage-meta .xp {
+    color: var(--amber); font-weight: 700; font-size: 12px;
+  }
+  .stage-state {
+    display: grid; place-items: center;
+    width: 36px; height: 36px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    transition: all .3s;
+  }
+  .stage.locked .stage-state { color: var(--muted); }
+  .stage.completed .stage-state {
+    background: var(--green); border-color: var(--green);
+    color: var(--night);
+  }
+  .stage.partial .stage-state {
+    border-color: var(--amber);
+    color: var(--amber);
+  }
+  .stage-state svg { width: 18px; height: 18px; }
+
+  .stage-body {
+    display: none;
+    padding: 0 24px 26px 92px;
+    border-top: 1px solid var(--line);
+    padding-top: 22px;
+    margin-top: 6px;
+  }
+  .stage.open .stage-body { display: block; animation: drop .25s ease-out; }
+  @keyframes drop {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .stage-body h4 {
+    font-family: var(--display);
+    font-size: 11px; letter-spacing: .25em; text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 10px; font-weight: 600;
+  }
+  .stage-body h4:not(:first-child) { margin-top: 24px; }
+
+  .obj-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+  .obj-list li {
+    display: grid; grid-template-columns: auto 1fr;
+    gap: 12px; align-items: start;
+    padding: 8px 0;
+    font-size: 14px; line-height: 1.6;
+    border-bottom: 1px dashed rgba(42,42,68,.6);
+  }
+  .obj-list li:last-child { border-bottom: none; }
+  .obj-list li::before { content: '▸'; color: var(--cyan); font-weight: 700; }
+  .stage[data-color="violet"] .obj-list li::before { color: var(--violet); }
+  .stage[data-color="pink"]   .obj-list li::before { color: var(--pink); }
+  .stage[data-color="rose"]   .obj-list li::before { color: var(--rose); }
+  .stage[data-color="amber"]  .obj-list li::before { color: var(--amber); }
+
+  pre {
+    margin: 0; padding: 16px 18px;
+    background: var(--night); border: 1px solid var(--line);
+    font-family: var(--mono); font-size: 13px;
+    line-height: 1.6; color: var(--text);
+    overflow-x: auto;
+  }
+  pre .cmt { color: var(--muted); }
+  pre .cmd { color: var(--green); }
+  pre .arg { color: var(--cyan); }
+  pre .str { color: var(--amber); }
+
+  .hint {
+    margin-top: 18px;
+    padding: 14px 16px;
+    background: rgba(245,158,11,.06);
+    border-left: 3px solid var(--amber);
+    font-size: 13px; line-height: 1.7;
+    color: #fde9c7;
+  }
+  .hint b { color: var(--amber); }
+  .danger {
+    margin-top: 18px; padding: 14px 16px;
+    background: rgba(244,63,94,.06);
+    border-left: 3px solid var(--rose);
+    font-size: 13px; line-height: 1.7;
+    color: #ffd5dc;
+  }
+  .danger b { color: var(--rose); }
+
+  /* Sub-levels (fix-it beats inside Track A) */
+  .sublevels {
+    margin-top: 6px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .sub {
+    display: grid;
+    grid-template-columns: 56px 1fr auto auto;
+    gap: 14px;
+    align-items: center;
+    padding: 14px 16px;
+    background: var(--night);
+    border: 1px solid var(--line);
+  }
+  .sub.completed {
+    border-color: rgba(34,197,94,.4);
+    background: rgba(34,197,94,.04);
+  }
+  .sub-id {
+    font-family: var(--display);
+    font-size: 14px; font-weight: 700;
+    color: var(--muted);
+    letter-spacing: .08em;
+  }
+  .sub.completed .sub-id { color: var(--green); }
+  .sub-title { font-size: 13px; line-height: 1.5; }
+  .sub-title b { font-weight: 700; }
+  .sub-title .file {
+    color: var(--cyan); font-size: 12px;
+  }
+  .sub-cmd {
+    font-family: var(--mono);
+    font-size: 11px; color: var(--amber);
+    background: var(--panel);
+    padding: 4px 8px; border: 1px solid var(--line);
+    letter-spacing: 0;
+  }
+  .sub-btn {
+    appearance: none;
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 6px 10px;
+    cursor: pointer;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    transition: all .2s;
+  }
+  .sub-btn:hover {
+    border-color: var(--green);
+    color: var(--green);
+  }
+  .sub.completed .sub-btn {
+    border-color: var(--green);
+    color: var(--green);
+    background: rgba(34,197,94,.1);
+    cursor: default;
+  }
+
+  .reward-row {
+    margin-top: 24px; padding-top: 22px;
+    border-top: 1px dashed var(--line);
+    display: flex; align-items: center;
+    justify-content: space-between; gap: 18px;
+    flex-wrap: wrap;
+  }
+  .badges { display: flex; gap: 8px; flex-wrap: wrap; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 10px;
+    background: var(--night); border: 1px solid var(--line);
+    font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--muted);
+  }
+  .badge.granted {
+    color: var(--amber);
+    border-color: rgba(245,158,11,.4);
+    background: rgba(245,158,11,.06);
+  }
+  .complete-btn {
+    appearance: none;
+    border: 1px solid var(--violet);
+    background: rgba(139,92,246,.12);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px; font-weight: 700;
+    letter-spacing: .18em; text-transform: uppercase;
+    padding: 12px 22px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .stage[data-color="cyan"]   .complete-btn { border-color: var(--cyan); background: rgba(6,182,212,.12); }
+  .stage[data-color="pink"]   .complete-btn { border-color: var(--pink); background: rgba(236,72,153,.12); }
+  .stage[data-color="rose"]   .complete-btn { border-color: var(--rose); background: rgba(244,63,94,.12); }
+  .stage[data-color="amber"]  .complete-btn { border-color: var(--amber); background: rgba(245,158,11,.12); }
+  .complete-btn:hover {
+    transform: translateY(-1px);
+    background: rgba(139,92,246,.22);
+    box-shadow: 0 4px 18px rgba(139,92,246,.25);
+  }
+  .complete-btn:disabled {
+    opacity: .35; cursor: not-allowed;
+    transform: none; box-shadow: none;
+  }
+  .stage.completed .complete-btn {
+    border-color: var(--green);
+    background: rgba(34,197,94,.14);
+    color: var(--green);
+    cursor: default; transform: none; box-shadow: none;
+  }
+
+  .compare {
+    width: 100%; border-collapse: collapse;
+    margin-top: 16px; font-size: 13px;
+  }
+  .compare th, .compare td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .compare th {
+    font-family: var(--display);
+    font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--muted); font-weight: 600;
+  }
+  .compare tr td:first-child { color: var(--muted); }
+
+  .boss-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 8px;
+    background: var(--pink); color: var(--night);
+    font-size: 9px; letter-spacing: .25em; text-transform: uppercase;
+    font-weight: 800;
+    margin-left: 10px;
+    animation: tagpulse 2.5s ease-in-out infinite;
+  }
+  @keyframes tagpulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(236,72,153,.5); }
+    50%     { box-shadow: 0 0 0 6px rgba(236,72,153,0); }
+  }
+
+  .victory {
+    margin-top: 80px;
+    padding: 48px 36px;
+    border: 1px solid var(--line);
+    background:
+      radial-gradient(600px 300px at 50% 0%, rgba(34,197,94,.08), transparent 70%),
+      var(--panel-2);
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .victory.locked { opacity: .35; filter: grayscale(.5); }
+  .victory .crown {
+    width: 64px; height: 64px;
+    margin: 0 auto 18px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--cyan), var(--violet), var(--pink));
+    display: grid; place-items: center;
+    color: var(--night);
+    font-size: 28px; font-weight: 900;
+    box-shadow: 0 0 60px rgba(139,92,246,.5);
+  }
+  .victory h2 {
+    font-family: var(--display);
+    font-size: 34px; margin: 0 0 8px;
+    letter-spacing: -.02em;
+    background: linear-gradient(90deg, var(--cyan), var(--violet), var(--pink));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .victory p { color: var(--muted); margin: 8px auto; max-width: 620px; line-height: 1.7; }
+  .victory .one-liner {
+    margin-top: 28px;
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 10px; text-align: left;
+  }
+  .victory .one-liner .c {
+    padding: 16px;
+    border: 1px solid var(--line); background: var(--night);
+  }
+  .victory .one-liner .c b { display: block; font-family: var(--display); font-size: 14px; margin-bottom: 6px; }
+  .victory .one-liner .c .a { color: var(--cyan); }
+  .victory .one-liner .c .b { color: var(--violet); }
+  .victory .one-liner .c .c { color: var(--pink); }
+  .victory .one-liner .c span { color: var(--muted); font-size: 13px; line-height: 1.6; }
+
+  .reset {
+    appearance: none;
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .reset:hover { color: var(--rose); border-color: var(--rose); }
+
+  .toast {
+    position: fixed; right: 28px; bottom: 28px;
+    padding: 16px 20px;
+    background: var(--night); border: 1px solid var(--green);
+    box-shadow: 0 12px 40px rgba(34,197,94,.25);
+    transform: translateY(120%);
+    transition: transform .35s cubic-bezier(.2,.8,.2,1);
+    z-index: 100; max-width: 320px;
+  }
+  .toast.show { transform: translateY(0); }
+  .toast .kicker {
+    font-size: 10px; letter-spacing: .25em;
+    text-transform: uppercase; color: var(--green);
+    margin-bottom: 4px; font-weight: 700;
+  }
+  .toast .name { font-family: var(--display); font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .toast .desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  @media (max-width: 800px) {
+    .hud-inner { grid-template-columns: 1fr; gap: 12px; padding: 10px 16px; }
+    .stats { justify-content: space-between; flex-wrap: wrap; }
+    .stage-head { grid-template-columns: 48px 1fr auto; gap: 14px; padding: 18px 16px; }
+    .stage-meta { display: none; }
+    .stage-body { padding: 18px 16px 22px 16px; }
+    .victory .one-liner { grid-template-columns: 1fr; }
+    .sub { grid-template-columns: auto 1fr auto; }
+    .sub-cmd { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hud">
+  <div class="hud-inner">
+    <div class="brand">
+      <span class="dot"></span>
+      <span class="title">OPERACIÓN <b>KAFKA</b> · v2</span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-label"><b id="progressNum">0</b>/<span id="progressTotal">17</span> CHECKS</div>
+    </div>
+    <div class="stats">
+      <div class="chip lvl">PARTE <b id="lvlVal">1</b>/7</div>
+      <div class="chip xp">XP <b id="xpVal">0</b></div>
+      <div class="chip badges">LOGROS <b id="badgesVal">0</b>/7</div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- Briefing -->
+  <section class="hero">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <span class="tag">// BRIEFING — 03:14 AM</span>
+    <h1>El sistema cayó. <span class="accent">Tú estás de guardia.</span></h1>
+    <p class="subtitle">
+      PagerDuty te despertó. <code style="color:var(--rose)">kafka-broker</code> está devolviendo errores 5xx,
+      el consumer lag crece y los servicios se desconectan en cadena. Tu misión: averiguar
+      <b>qué se rompió</b>, <b>qué más está en riesgo</b> y <b>qué hacer al respecto</b> — y, en el
+      camino, construir el RAG que te ayuda a hacerlo.
+    </p>
+
+    <div class="briefing">
+      <div class="icon">!</div>
+      <p>
+        Este taller tiene dos vías. La <b style="color:var(--cyan)">Vía A — Construirlo</b> arregla código
+        deliberadamente roto en tres etapas (Plain → Graph → Agentic). La <b style="color:var(--pink)">Vía B — Compararlo</b>
+        ejecuta la implementación de referencia, mide la calidad de retrieval y deja que iteres prompts y topología.
+        Si nunca construiste un RAG, sigue las dos vías en orden. Si ya conoces RAG, salta directo a la Vía B.
+      </p>
+    </div>
+
+    <div class="meta">
+      <span>DURACIÓN <b>~6 H</b></span><span class="sep"></span>
+      <span>PARTES <b>7</b></span><span class="sep"></span>
+      <span>EJERCICIOS <b>10</b></span><span class="sep"></span>
+      <span>RECOMPENSA <b>5000 XP + 7 LOGROS</b></span>
+    </div>
+  </section>
+
+  <!-- Track A -->
+  <header class="track-head">
+    <span class="num">// VÍA A</span>
+    <h2><span class="a">Construirlo</span></h2>
+    <span class="line"></span>
+    <span class="summary">~3 H · <b>3 PARTES</b> · <b>10 EJERCICIOS</b></span>
+  </header>
+
+  <div class="stages" id="stagesA"></div>
+
+  <!-- Track B -->
+  <header class="track-head" style="margin-top:64px">
+    <span class="num">// VÍA B</span>
+    <h2><span class="b">Compararlo</span></h2>
+    <span class="line"></span>
+    <span class="summary">~3 H · <b>4 PARTES</b></span>
+  </header>
+
+  <div class="stages" id="stagesB"></div>
+
+  <!-- Victory -->
+  <section class="victory locked" id="victory">
+    <div class="crown">★</div>
+    <h2>Misión completada</h2>
+    <p>
+      Construiste un RAG desde código roto y lo comparaste contra una referencia con métricas reales.
+      Ahora distingues sin esfuerzo dónde vive cada parte y cuándo conviene cada modo.
+      Esa intuición es lo que el taller intentaba construir.
+    </p>
+    <div class="one-liner">
+      <div class="c"><b class="a">Plain RAG</b><span>Recupera <i>hechos</i>.</span></div>
+      <div class="c"><b class="b">Graph RAG</b><span>Recupera hechos <i>+ relaciones</i>.</span></div>
+      <div class="c"><b class="c">Agentic RAG</b><span>Decide <i>qué · de dónde · quién actúa</i>.</span></div>
+    </div>
+    <p style="margin-top:28px">
+      <button class="reset" id="resetBtn">// Reiniciar progreso</button>
+    </p>
+  </section>
+
+</main>
+
+<div class="toast" id="toast">
+  <div class="kicker">// LOGRO DESBLOQUEADO</div>
+  <div class="name" id="toastName">—</div>
+  <div class="desc" id="toastDesc">—</div>
+</div>
+
+<script>
+  const CHECK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+  const LOCK  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="1"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
+  const PLAY  = `<svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20"/></svg>`;
+  const HALF  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 v20"/><path d="M2 12 a10 10 0 0 1 10 -10"/></svg>`;
+
+  const STAGES = [
+    {
+      track: 'A',
+      id: 'a1-plain',
+      kicker: 'VÍA A · PARTE 1',
+      title: 'Plain RAG — está roto, arréglalo',
+      desc: 'Tres fallas clásicas: chunking, top-k, prompt. Diagnostica y arregla los TODO.',
+      color: 'cyan',
+      stars: 2,
+      time: '45 min',
+      xp: 600,
+      subs: [
+        { id: '1.1', title: '<b>Chunking</b> — cada servicio era un mega-chunk. Sécciona por aspecto.',          file: 'exercises/part1_plain/chunking.py', cmd: 'make exercise 1.1' },
+        { id: '1.2', title: '<b>Top-k + filtros</b> — k=1 sin filtros mezcla servicios y department-knowledge.', file: 'exercises/part1_plain/search.py',   cmd: 'make exercise 1.2' },
+        { id: '1.3', title: '<b>Prompt</b> — el system prompt nombra "context" pero nunca lo inserta.',          file: 'exercises/part1_plain/prompt.py',   cmd: 'make exercise 1.3' },
+      ],
+      hint: '<b>Antes de tocar 1.1:</b> mira qué devuelve <code>chunk_service()</code> y pregúntate qué consultas NUNCA matchearían el hit correcto. Eso te dice por dónde cortar.',
+      badge: { name: 'Tirador Solitario', desc: 'Tu RAG plano ahora chunkea, filtra y prompts decentemente.' }
+    },
+    {
+      track: 'A',
+      id: 'a2-graph',
+      kicker: 'VÍA A · PARTE 2',
+      title: 'Graph RAG — está roto, arréglalo',
+      desc: 'Cypher · variable-length paths · fusión vector + grafo.',
+      color: 'violet',
+      stars: 3,
+      time: '60 min',
+      xp: 800,
+      subs: [
+        { id: '2.1', title: '<b>Vecindario</b> — el query devuelve props pero no las dependencias.',           file: 'exercises/part2_graph/neighborhood.cypher', cmd: 'make exercise 2.1' },
+        { id: '2.2', title: '<b>Blast radius</b> — solo encuentra dependientes directos. Falta <code>*1..N</code>.', file: 'exercises/part2_graph/blast_radius.py',     cmd: 'make exercise 2.2' },
+        { id: '2.3', title: '<b>Fusión</b> — vector y grafo se concatenan como muro de texto. Estructura.',     file: 'exercises/part2_graph/fusion.py',           cmd: 'make exercise 2.3' },
+      ],
+      hint: 'Verifica la cascada en Neo4j browser: <code>MATCH path = (a)-[:DEPENDS_ON*1..4]->(b {name:\'kafka-broker\'}) RETURN path</code>. Si tu Cypher es correcto vas a ver el árbol.',
+      badge: { name: 'Cartógrafo', desc: 'Mapeaste la cascada con Cypher y la fusionaste limpio.' }
+    },
+    {
+      track: 'A',
+      id: 'a3-agentic',
+      kicker: 'VÍA A · PARTE 3',
+      title: 'Agentic RAG — está roto, arréglalo',
+      desc: 'Triage · router · estado · prompt experto. El sistema decide.',
+      color: 'pink',
+      stars: 4,
+      time: '75 min',
+      xp: 1100,
+      boss: true,
+      subs: [
+        { id: '3.1', title: '<b>Triage classifier</b> — el JSON viene en backticks; el parser cae al fallback.', file: 'exercises/part3_agentic/triage.py',           cmd: 'make exercise 3.1' },
+        { id: '3.2', title: '<b>Router</b> — elige por regex. Ignora el blast radius y los cross-departamento.', file: 'exercises/part3_agentic/router.py',           cmd: 'make exercise 3.2' },
+        { id: '3.3', title: '<b>Estado</b> — el TypedDict no propaga el blast report al especialista.',         file: 'exercises/part3_agentic/state.py',            cmd: 'make exercise 3.3' },
+        { id: '3.4', title: '<b>Especialista</b> — el system prompt es genérico. Falta expertise data.',         file: 'exercises/part3_agentic/specialists/data.py', cmd: 'make exercise 3.4' },
+      ],
+      hint: '<b>El momento agéntico</b> aparece cuando 3.1–3.3 están verdes: el router lee <code>blast_radius_report.affected_departments</code> que el triage recuperó del grafo. <i>El retrieval informa al routing.</i>',
+      badge: { name: 'Comandante', desc: 'Coordinaste un equipo agéntico de principio a fin.' }
+    },
+
+    {
+      track: 'B',
+      id: 'b4-compare',
+      kicker: 'VÍA B · PARTE 4',
+      title: 'Tres modos lado a lado',
+      desc: 'Mismo incidente en pestañas separadas. Compara las tres respuestas.',
+      color: 'cyan',
+      stars: 2,
+      time: '30 min',
+      xp: 400,
+      objectives: [
+        'Ejecutar Plain, Graph y Agentic sobre <code>kafka-broker</code> en pestañas distintas.',
+        'Identificar diferencias en: servicios nombrados, departamentos, comandos sugeridos.',
+        'Predecir el comportamiento antes de cada corrida.'
+      ],
+      commands: [
+        ['make rag kafka-broker',       'Plain RAG (vector + 1 LLM)'],
+        ['make graph-rag kafka-broker', 'Graph RAG (+ Neo4j)'],
+        ['make tui kafka-broker',       'Agentic RAG (pipeline completo)']
+      ],
+      compareTriple: {
+        head: ['Pregunta', 'Plain', 'Graph', 'Agentic'],
+        rows: [
+          ['Servicios en riesgo',     'Vago',         'Exacto (5)',         'Exacto + departamentos'],
+          ['¿A quién paginar?',        'Genérico',     'Genérico',           'data-oncall específico'],
+          ['Comando Kafka concreto',   'Improbable',   'Improbable',         'Probable'],
+          ['Llamadas LLM',             '1',             '1',                  '2'],
+          ['Pasos de retrieval',       '1',             '3',                  '4–5']
+        ]
+      },
+      badge: { name: 'Comparador', desc: 'Viste con tus propios ojos cómo cambia la respuesta.' }
+    },
+    {
+      track: 'B',
+      id: 'b5-eval',
+      kicker: 'VÍA B · PARTE 5',
+      title: 'Medir la calidad de retrieval',
+      desc: 'Gold set + recall@k + precision@k + MRR. Las arquitecturas se discuten con números.',
+      color: 'violet',
+      stars: 3,
+      time: '45 min',
+      xp: 700,
+      objectives: [
+        'Correr <code>make eval</code> contra el modo vector y anotar las métricas baseline.',
+        'Correr <code>make eval MODE=graph</code> y observar el lift en recall@k.',
+        'Agregar al menos un par <code>(query, expected_services)</code> propio en <code>eval/gold_set.json</code>.'
+      ],
+      commands: [
+        ['make eval',                'modo vector, k=5'],
+        ['make eval MODE=graph',     'vector + Neo4j fusión'],
+        ['make eval MODE=graph K=10', 'top-k más amplio']
+      ],
+      hint: '<b>Tip:</b> Corre <code>make eval</code> antes y después de implementar 1.2 (top-k + filtros). El salto en recall es la evidencia más directa de que el arreglo importa.',
+      badge: { name: 'Cuantificador', desc: 'Mediste la calidad de retrieval con números, no opiniones.' }
+    },
+    {
+      track: 'B',
+      id: 'b6-iterate',
+      kicker: 'VÍA B · PARTE 6',
+      title: 'Iterar prompts y topología',
+      desc: 'Tres experimentos: prompt experto, distintos incidentes, agregar un servicio.',
+      color: 'rose',
+      stars: 3,
+      time: '45 min',
+      xp: 600,
+      objectives: [
+        'Mejorar <code>PLATFORM_SYSTEM_PROMPT</code> agregando servicios y runbooks concretos.',
+        'Probar 4 incidentes distintos y predecir el especialista antes de cada corrida.',
+        'Agregar <code>audit-log</code> a la topología y verificar que el blast radius lo descubre solo.'
+      ],
+      experiments: [
+        { name: 'Mejora un prompt experto',     hint: 'Compara <code>data.py</code> vs <code>platform.py</code>. El de data nombra servicios; el de platform es genérico.' },
+        { name: 'Prueba distintos incidentes',  hint: '<code>make tui api-gateway · k8s-controller · experiment-tracker · postgres-primary</code>. Predice antes de correr.' },
+        { name: 'Agrega un servicio nuevo',     hint: 'Append a <code>topology.py</code>, <code>make seed</code>, <code>make tui audit-log</code>. El grafo lo descubre sin tocar agentes.' }
+      ],
+      badge: { name: 'Iterador', desc: 'Cambiaste el comportamiento sin reescribir el sistema.' }
+    },
+    {
+      track: 'B',
+      id: 'b7-endgame',
+      kicker: 'VÍA B · PARTE 7',
+      title: 'Endgame — desafíos a elección',
+      desc: 'Cuatro extensiones avanzadas. Elige una; cada una llena el tiempo.',
+      color: 'amber',
+      stars: 5,
+      time: '45 min',
+      xp: 800,
+      objectives: [
+        '<b>Reflexionar y volver a recuperar:</b> agrega un paso que evalúe la confianza del especialista y vuelva a buscar si es baja.',
+        '<b>Fan-out cross-departamento:</b> usa <code>langgraph.graph.Send</code> para llamar especialistas en paralelo.',
+        '<b>Memoria entre incidentes:</b> escribe el análisis en Qdrant y úsalo como contexto previo en la próxima corrida.',
+        '<b>Reemplazar Cypher por LLM:</b> sustituye <code>_cypher_blast_radius()</code> por reasoning. Mide vs ground truth con <code>make eval</code>.'
+      ],
+      badge: { name: 'Maestro RAG', desc: 'Llegaste al endgame y elegiste tu camino.' }
+    }
+  ];
+
+  const KEY = 'kafka-mission-progress-v2';
+
+  let state = load();
+
+  function load() {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (!raw) return { subs: [], stages: [], xp: 0 };
+      const data = JSON.parse(raw);
+      if (!Array.isArray(data.subs)) data.subs = [];
+      if (!Array.isArray(data.stages)) data.stages = [];
+      return data;
+    } catch { return { subs: [], stages: [], xp: 0 }; }
+  }
+  function save() { localStorage.setItem(KEY, JSON.stringify(state)); }
+
+  const isSubDone   = (id) => state.subs.includes(id);
+  const isStageDone = (id) => state.stages.includes(id);
+
+  // A stage is "completed" when its sub-list is empty (just stage button)
+  // OR all subs are done AND the stage button has been pressed.
+  // Order: A1 → A2 → A3 → B4 → B5 → B6 → B7.
+  function isUnlocked(idx) {
+    if (idx === 0) return true;
+    return isStageDone(STAGES[idx - 1].id);
+  }
+
+  function stars(n) { return '★'.repeat(n) + '☆'.repeat(5 - n); }
+  function escapeHtml(str) {
+    return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function commandHTML(cmds) {
+    if (!cmds || !cmds.length) return '';
+    let body = '';
+    cmds.forEach(([cmd, comment]) => {
+      const cmdEsc = escapeHtml(cmd);
+      const padding = ' '.repeat(Math.max(2, 32 - cmd.length));
+      body += `<span class="cmd">${cmdEsc}</span>${padding}<span class="cmt"># ${escapeHtml(comment)}</span>\n`;
+    });
+    return `<pre>${body.trimEnd()}</pre>`;
+  }
+
+  function buildStage(stage, idx) {
+    const stageDone = isStageDone(stage.id);
+    const unlocked  = isUnlocked(idx);
+    const subsDone  = stage.subs ? stage.subs.filter(s => isSubDone(s.id)).length : 0;
+    const subsTotal = stage.subs ? stage.subs.length : 0;
+    const partial   = !stageDone && subsTotal > 0 && subsDone > 0;
+
+    let body = '';
+
+    if (stage.subs) {
+      body += `<h4>// Ejercicios — ${subsDone}/${subsTotal} completados</h4><div class="sublevels">${
+        stage.subs.map(sub => {
+          const done = isSubDone(sub.id);
+          return `
+            <div class="sub ${done ? 'completed' : ''}" data-sub="${sub.id}">
+              <div class="sub-id">EX ${sub.id}</div>
+              <div class="sub-title">${sub.title}<br/><span class="file">${sub.file}</span></div>
+              <code class="sub-cmd">${escapeHtml(sub.cmd)}</code>
+              <button class="sub-btn" data-action="sub" data-sub="${sub.id}" ${done ? 'disabled' : ''}>
+                ${done ? '✓ HECHO' : 'COMPLETAR'}
+              </button>
+            </div>`;
+        }).join('')
+      }</div>`;
+    }
+
+    if (stage.objectives) {
+      body += `<h4>// Objetivos</h4><ul class="obj-list">${
+        stage.objectives.map(o => `<li>${o}</li>`).join('')
+      }</ul>`;
+    }
+
+    if (stage.commands) {
+      body += `<h4>// Comandos</h4>${commandHTML(stage.commands)}`;
+    }
+
+    if (stage.compareTriple) {
+      const ct = stage.compareTriple;
+      body += `<h4>// Las tres respuestas</h4><table class="compare"><thead><tr>${
+        ct.head.map(h => `<th>${h}</th>`).join('')
+      }</tr></thead><tbody>${
+        ct.rows.map(r => `<tr>${r.map((c, i) => i === 0 ? `<td>${c}</td>` : `<td>${c}</td>`).join('')}</tr>`).join('')
+      }</tbody></table>`;
+    }
+
+    if (stage.experiments) {
+      body += `<h4>// Experimentos</h4><div class="sublevels">${
+        stage.experiments.map((e, i) => `
+          <div class="sub">
+            <div class="sub-id">${i+1}</div>
+            <div class="sub-title"><b>${e.name}</b><br/><span style="color:var(--muted);font-size:12px">${e.hint}</span></div>
+            <span></span><span></span>
+          </div>
+        `).join('')
+      }</div>`;
+    }
+
+    if (stage.hint)   body += `<div class="hint">${stage.hint}</div>`;
+    if (stage.danger) body += `<div class="danger">${stage.danger}</div>`;
+
+    // Stage-completion button — disabled until all subs are done (if subs exist)
+    const canComplete = stage.subs ? subsDone === subsTotal : true;
+    body += `<div class="reward-row">
+      <div class="badges">
+        ${stage.badge ? `<div class="badge ${stageDone ? 'granted' : ''}">★ ${stage.badge.name}</div>` : ''}
+        <div class="badge">+${stage.xp} XP</div>
+      </div>
+      <button class="complete-btn" data-action="stage" data-id="${stage.id}" ${(!canComplete || stageDone) ? 'disabled' : ''}>
+        ${stageDone ? '✓ Parte completada' : (canComplete ? 'Cerrar la parte' : `Completa los ${subsTotal} ejercicios primero`)}
+      </button>
+    </div>`;
+
+    const cls = `stage ${stageDone ? 'completed' : (partial ? 'partial' : '')} ${!unlocked ? 'locked' : ''}`;
+    const stateIcon = stageDone ? CHECK : (partial ? HALF : (unlocked ? PLAY : LOCK));
+    const bossTag = stage.boss ? '<span class="boss-tag">BOSS</span>' : '';
+    const num = stage.id.startsWith('a') ? `A${stage.id[1]}` : `B${stage.id[1]}`;
+
+    return `
+      <article class="${cls}" data-id="${stage.id}" data-color="${stage.color}">
+        <header class="stage-head" data-action="toggle">
+          <div class="stage-num">${num}</div>
+          <div class="stage-title">
+            <span class="kicker">${stage.kicker}</span>
+            <h3>${stage.title}${bossTag}</h3>
+            <span class="desc">${stage.desc}</span>
+          </div>
+          <div class="stage-meta">
+            <div class="row"><span class="stars">${stars(stage.stars)}</span></div>
+            <div class="row"><span>TIEMPO <b>${stage.time}</b></span></div>
+            <div class="row"><span class="xp">+${stage.xp} XP</span></div>
+          </div>
+          <div class="stage-state">${stateIcon}</div>
+        </header>
+        <div class="stage-body">${body}</div>
+      </article>
+    `;
+  }
+
+  const rootA = document.getElementById('stagesA');
+  const rootB = document.getElementById('stagesB');
+
+  function render() {
+    rootA.innerHTML = STAGES.map((s, i) => s.track === 'A' ? buildStage(s, i) : '').join('');
+    rootB.innerHTML = STAGES.map((s, i) => s.track === 'B' ? buildStage(s, i) : '').join('');
+    updateHud();
+    updateVictory();
+  }
+
+  function totalChecks() {
+    return STAGES.reduce((sum, s) => sum + (s.subs ? s.subs.length : 0) + 1, 0);
+  }
+
+  function updateHud() {
+    const total = totalChecks();
+    const done  = state.subs.length + state.stages.length;
+    document.getElementById('progressTotal').textContent = total;
+    document.getElementById('progressNum').textContent = done;
+    document.getElementById('progressFill').style.width = `${(done / total) * 100}%`;
+    document.getElementById('xpVal').textContent = state.xp;
+    const stagesDone = state.stages.length;
+    document.getElementById('lvlVal').textContent = Math.min(7, stagesDone + 1);
+    document.getElementById('badgesVal').textContent = STAGES.filter(s => s.badge && state.stages.includes(s.id)).length;
+  }
+
+  function updateVictory() {
+    const v = document.getElementById('victory');
+    if (state.stages.length === STAGES.length) v.classList.remove('locked');
+    else v.classList.add('locked');
+  }
+
+  function completeSub(subId) {
+    if (state.subs.includes(subId)) return;
+    state.subs.push(subId);
+    state.xp += 100;
+    save();
+    render();
+    showToast('Ejercicio ' + subId + ' completado', '+100 XP. Sigue con el siguiente o cierra la parte.');
+    const stage = STAGES.find(s => s.subs && s.subs.some(sub => sub.id === subId));
+    if (stage) {
+      const el = document.querySelector(`.stage[data-id="${stage.id}"]`);
+      if (el) el.classList.add('open');
+    }
+  }
+
+  function completeStage(stageId) {
+    if (state.stages.includes(stageId)) return;
+    const idx = STAGES.findIndex(s => s.id === stageId);
+    if (!isUnlocked(idx)) return;
+    const stage = STAGES[idx];
+    if (stage.subs && stage.subs.some(sub => !state.subs.includes(sub.id))) return;
+    state.stages.push(stageId);
+    state.xp += stage.xp;
+    save();
+    render();
+    if (stage.badge) showToast(stage.badge.name, stage.badge.desc);
+    else showToast('Parte cerrada', `Sumaste ${stage.xp} XP.`);
+    const el = document.querySelector(`.stage[data-id="${stageId}"]`);
+    if (el) el.classList.add('open');
+  }
+
+  let toastTimer;
+  function showToast(name, desc) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastName').textContent = name;
+    document.getElementById('toastDesc').textContent = desc;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 4200);
+  }
+
+  function handleClick(e) {
+    const subBtn = e.target.closest('[data-action="sub"]');
+    if (subBtn) {
+      e.stopPropagation();
+      completeSub(subBtn.dataset.sub);
+      return;
+    }
+    const stageBtn = e.target.closest('[data-action="stage"]');
+    if (stageBtn && !stageBtn.disabled) {
+      e.stopPropagation();
+      completeStage(stageBtn.dataset.id);
+      return;
+    }
+    const head = e.target.closest('[data-action="toggle"]');
+    if (head) {
+      const stage = head.parentElement;
+      if (stage.classList.contains('locked')) return;
+      stage.classList.toggle('open');
+    }
+  }
+
+  rootA.addEventListener('click', handleClick);
+  rootB.addEventListener('click', handleClick);
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    if (!confirm('¿Reiniciar el progreso de la misión?')) return;
+    state = { subs: [], stages: [], xp: 0 };
+    save();
+    render();
+  });
+
+  render();
+  // Open the first non-completed stage on load.
+  const firstOpen = STAGES.find((s, i) => !isStageDone(s.id) && isUnlocked(i));
+  if (firstOpen) {
+    const el = document.querySelector(`.stage[data-id="${firstOpen.id}"]`);
+    if (el && !el.classList.contains('locked')) el.classList.add('open');
+  }
+</script>
+</body>
+</html>

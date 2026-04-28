@@ -1,0 +1,65 @@
+{
+  "description": "Ground-truth (query, expected_services) pairs for retrieval evaluation. expected_services lists the services that SHOULD appear in the top-k results — the failing service plus its direct neighbors.",
+  "items": [
+    {
+      "query": "kafka-broker is returning 5xx errors and consumer lag is climbing",
+      "expected_services": ["kafka-broker", "clickhouse-analytics", "order-service", "payment-service", "notification-service"]
+    },
+    {
+      "query": "postgres replication lag spiked and writes are failing",
+      "expected_services": ["postgres-primary", "order-service", "payment-service", "feature-store", "inventory-service"]
+    },
+    {
+      "query": "api-gateway is dropping requests at the edge",
+      "expected_services": ["api-gateway", "auth-service", "service-mesh", "config-service"]
+    },
+    {
+      "query": "redis cache evictions are spiking and sessions are flapping",
+      "expected_services": ["redis-cache", "inventory-service", "feature-store", "auth-service"]
+    },
+    {
+      "query": "k8s control plane is unresponsive",
+      "expected_services": ["k8s-controller", "monitoring-agent", "ci-runner", "dns-resolver"]
+    },
+    {
+      "query": "model-serving is returning stale predictions",
+      "expected_services": ["model-serving", "feature-store", "redis-cache", "experiment-tracker"]
+    },
+    {
+      "query": "auth tokens are being rejected after token refresh",
+      "expected_services": ["auth-service", "api-gateway", "service-mesh"]
+    },
+    {
+      "query": "training pipeline jobs are timing out before completion",
+      "expected_services": ["training-pipeline", "feature-store", "experiment-tracker", "k8s-controller"]
+    },
+    {
+      "query": "clickhouse queries are slow and merges are backing up",
+      "expected_services": ["clickhouse-analytics", "kafka-broker"]
+    },
+    {
+      "query": "dns resolution is failing intermittently across the cluster",
+      "expected_services": ["dns-resolver", "service-mesh", "k8s-controller"]
+    },
+    {
+      "query": "order-service is rejecting purchases at checkout",
+      "expected_services": ["order-service", "postgres-primary", "kafka-broker", "payment-service"]
+    },
+    {
+      "query": "notification-service is failing to send transactional emails",
+      "expected_services": ["notification-service", "kafka-broker"]
+    },
+    {
+      "query": "ci-runner builds are failing to start",
+      "expected_services": ["ci-runner", "k8s-controller"]
+    },
+    {
+      "query": "monitoring is reporting false positives across the platform",
+      "expected_services": ["monitoring-agent", "k8s-controller", "dns-resolver"]
+    },
+    {
+      "query": "service-mesh sidecars are crash-looping",
+      "expected_services": ["service-mesh", "api-gateway", "auth-service"]
+    }
+  ]
+}

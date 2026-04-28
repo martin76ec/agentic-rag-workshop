@@ -219,8 +219,10 @@ make setup
 # 4️⃣  Seed 20 services into both stores
 make seed
 
-# 5️⃣  Run the full agentic pipeline
-make tui kafka-broker
+# 5️⃣  Pick your track
+make exercise 1.1            # Track A — fix a deliberately broken RAG
+make tui kafka-broker        # Track B — run the reference agentic pipeline
+make eval                    # Track B — measure retrieval quality
 ```
 
 <div align="center">
@@ -243,9 +245,13 @@ make tui kafka-broker
 
 | Command | What it does |
 |:--|:--|
-| `make rag <service>` | **Plain RAG** — single vector search → LLM |
-| `make graph-rag <service>` | **Graph RAG** — vector + Neo4j topology + blast radius |
-| `make tui <service>` | **Agentic RAG** — full pipeline with live TUI |
+| `make exercise N.M` | **Track A** — run a broken exercise (e.g. `make exercise 1.1`) |
+| `make verify N.M` | **Track A** — only the tests for that exercise |
+| `make solution N.M` | **Track A** — reveal the reference file in `src/` |
+| `make rag <service>` | **Track B / Plain RAG** — single vector search → LLM |
+| `make graph-rag <service>` | **Track B / Graph RAG** — vector + Neo4j topology + blast radius |
+| `make tui <service>` | **Track B / Agentic RAG** — full pipeline with live TUI |
+| `make eval [MODE=graph K=10]` | **Track B** — recall@k, precision@k, MRR on the gold set |
 | `make seed` | Populate Qdrant + Neo4j from `topology.py` |
 | `make inspect-mem` | List documents stored in Qdrant |
 | `make browse-graph` | Open Neo4j browser (run `MATCH (n) RETURN n`) |
