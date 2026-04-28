@@ -1,70 +1,81 @@
 <div align="center">
 
-# Agentic RAG Workshop
+<br/>
 
-**Build intuition for retrieval-augmented generation by running the same
-infrastructure incident through three progressively more powerful modes.**
-
-[![Python](https://img.shields.io/badge/python-3.11+-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
-[![LangGraph](https://img.shields.io/badge/LangGraph-stateful_agents-FF6B35?style=flat-square)](https://langchain-ai.github.io/langgraph/)
-[![Ollama](https://img.shields.io/badge/Ollama-local_LLM-000000?style=flat-square&logo=ollama&logoColor=white)](https://ollama.com)
-[![Qdrant](https://img.shields.io/badge/Qdrant-vector_store-DC244C?style=flat-square)](https://qdrant.tech)
-[![Neo4j](https://img.shields.io/badge/Neo4j-graph_db-008CC1?style=flat-square&logo=neo4j&logoColor=white)](https://neo4j.com)
+<img src="assets/demo.svg" width="780" alt="Live TUI — kafka-broker incident running through the agentic pipeline"/>
 
 <br/>
 
-<img src="assets/demo.svg" width="720" alt="Live TUI demo — kafka-broker incident running through the agentic pipeline"/>
+# Agentic RAG Workshop
+
+**Build intuition for retrieval-augmented generation by running the same<br/>
+infrastructure incident through three progressively more powerful modes.**
+
+<br/>
+
+[![Python](https://img.shields.io/badge/Python_3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![LangGraph](https://img.shields.io/badge/LangGraph-stateful_agents-FF6B35?style=for-the-badge)](https://langchain-ai.github.io/langgraph/)
+[![Ollama](https://img.shields.io/badge/Ollama-local_LLM-000000?style=for-the-badge&logo=ollama&logoColor=white)](https://ollama.com)
+[![Qdrant](https://img.shields.io/badge/Qdrant-vector_store-DC244C?style=for-the-badge)](https://qdrant.tech)
+[![Neo4j](https://img.shields.io/badge/Neo4j-graph_db-008CC1?style=for-the-badge&logo=neo4j&logoColor=white)](https://neo4j.com)
+
+<br/>
 
 </div>
 
 ---
 
-## The Idea
+## The Core Idea
 
-Three modes. Same incident (`kafka-broker` failure). Watch how the system's
-understanding of *what* to retrieve — and *who* should handle it — evolves.
+Three modes. One incident — `kafka-broker` failure. Watch how the system's
+understanding of *what* to retrieve, and *who* to route to, evolves with each step.
 
-| | Plain RAG | Graph RAG | Agentic RAG |
+<br/>
+
+<div align="center">
+
+|  | Plain RAG | Graph RAG | Agentic RAG |
 |:--|:--:|:--:|:--:|
-| **How retrieval works** | Fixed vector search | Fixed vector + 2 Cypher queries | Agent decides what to retrieve |
-| **Knows blast radius?** | No — vague estimates | Yes — exact named services | Yes + departments + escalation paths |
-| **Who gets paged?** | Generic advice | Generic advice | `data-oncall` specifically |
-| **Specialist knowledge?** | No | No | Yes — Kafka-specific runbooks |
-| **LLM calls** | 1 | 1 | 2 (triage + specialist) |
-| **Retrieval steps** | 1 | 3 | 4–5 |
+| **Retrieval strategy** | Fixed vector search | Vector + 2 Cypher queries | Agent decides what to retrieve |
+| **Blast radius** | Vague estimates | Exact named services | Named services + departments + escalation |
+| **Who gets paged** | Generic advice | Generic advice | `data-oncall` specifically |
+| **Specialist knowledge** | — | — | Kafka-specific runbooks |
+| **LLM calls** | `1` | `1` | `2` (triage + specialist) |
+| **Retrieval steps** | `1` | `3` | `4 – 5` |
 
-> **Retrieval is not a fixed step. It's a decision made by the agent
-> based on what it has already learned.**
+</div>
+
+<br/>
+
+> [!NOTE]
+> **Retrieval is not a fixed step. It is a decision made by the agent based on what it has already learned.**
 
 ---
 
-## Workshop Guide
+## Workshop
 
-The full guided workshop is in [`WORKSHOP.md`](WORKSHOP.md) (~90 min, 4 parts).
+The full guided workshop is in [`WORKSHOP.md`](WORKSHOP.md) — ~90 min, 4 parts.
 
-**The progression:**
+Run all three modes in separate terminals and compare outputs side by side:
 
+```bash
+make rag kafka-broker        # Part 1 — plain RAG: one search, one LLM call
+make graph-rag kafka-broker  # Part 2 — add Neo4j topology queries
+make tui kafka-broker        # Part 3 — full agentic pipeline with live TUI
 ```
-make rag kafka-broker        # Part 1: plain RAG — one search, one LLM
-make graph-rag kafka-broker  # Part 2: add Neo4j topology queries
-make tui kafka-broker        # Part 3: full agentic pipeline with live TUI
-```
-
-Run all three in separate tabs, compare outputs side by side. Each mode runs
-the same incident so the differences are unambiguous.
 
 ---
 
 ## Quick Start
 
-**Prerequisites:** [uv](https://docs.astral.sh/uv/), [Docker](https://www.docker.com/), [Ollama](https://ollama.com)
+> **Prerequisites:** [uv](https://docs.astral.sh/uv/) · [Docker](https://www.docker.com/) · [Ollama](https://ollama.com)
 
 ```bash
-# 1. Pull models (one-time)
+# 1. Pull models (one-time, ~20 GB)
 ollama pull gemma4:31b-cloud
 ollama pull nomic-embed-text-v2-moe
 
-# 2. Start stores, create .env, install deps
+# 2. Start Qdrant + Neo4j, create .env, install deps
 make setup
 
 # 3. Seed 20 services into Qdrant (vector) + Neo4j (graph)
@@ -78,7 +89,7 @@ Verify both stores have data before running:
 
 ```bash
 make inspect-mem    # lists all documents in Qdrant
-make browse-graph   # opens Neo4j browser — run: MATCH (n) RETURN n
+make browse-graph   # opens Neo4j browser → run: MATCH (n) RETURN n
 ```
 
 ---
@@ -86,53 +97,85 @@ make browse-graph   # opens Neo4j browser — run: MATCH (n) RETURN n
 ## Architecture
 
 ```
-Incident
-   │
-   ├─ Plain RAG ──────────────── [Vector Search] ──────────────── [LLM] ── Response
-   │
-   ├─ Graph RAG ────── [Vector Search] ── [Neo4j: neighborhood] ──────────────────
-   │                                      [Neo4j: blast radius] ── [LLM] ── Response
-   │
-   └─ Agentic RAG ── ┌─ Triage Agent ──────────────────────────┐
-                     │  vector search + graph neighborhood      │
-                     │  + blast radius + LLM classification     │
-                     └─────────────────────┬───────────────────┘
-                                           │ state: service, severity,
-                                           │ blast_radius_report
-                                           ▼
-                              ┌─ Router Agent ─────────────────┐
-                              │  reads affected_departments     │
-                              │  routes to specialist           │
-                              └────────────┬───────────────────┘
-                                           │
-                                           ▼
-                              ┌─ Specialist [data] ────────────┐
-                              │  targeted vector search         │
-                              │  Kafka-expert system prompt     │
-                              │  root cause + runbooks          │
-                              └────────────────────────────────┘
+                         ┌──────────────────────────────────────┐
+   Incident input        │           PLAIN RAG                  │
+   kafka-broker  ──────▶ │  Vector Search → LLM → Response      │
+                         └──────────────────────────────────────┘
+
+                         ┌──────────────────────────────────────┐
+                         │           GRAPH RAG                  │
+                ──────▶  │  Vector Search                        │
+                         │  + Neo4j: service neighborhood        │
+                         │  + Neo4j: blast radius traversal      │
+                         │  → LLM → Response                     │
+                         └──────────────────────────────────────┘
+
+                         ┌──────────────────────────────────────────────────────────┐
+                         │                   AGENTIC RAG                            │
+                         │                                                          │
+                         │   ┌──────────────────────────────────────────────────┐   │
+                ──────▶  │   │  Triage Agent                                    │   │
+                         │   │  · vector search (Mem0 / Qdrant)                 │   │
+                         │   │  · Neo4j: service neighborhood                   │   │
+                         │   │  · Neo4j: blast radius (DEPENDS_ON*1..4)         │   │
+                         │   │  · LLM: classify service, severity, department   │   │
+                         │   └────────────────────────┬─────────────────────────┘   │
+                         │                            │                             │
+                         │              state: service_name, severity,              │
+                         │              department, blast_radius_report             │
+                         │                            │                             │
+                         │                            ▼                             │
+                         │   ┌──────────────────────────────────────────────────┐   │
+                         │   │  Router Agent                                    │   │
+                         │   │  · reads blast_radius_report.affected_departments│   │
+                         │   │  · selects specialist node                       │   │
+                         │   └────────────────────────┬─────────────────────────┘   │
+                         │                            │                             │
+                         │                            ▼                             │
+                         │   ┌──────────────────────────────────────────────────┐   │
+                         │   │  Specialist Agent  [data]                        │   │
+                         │   │  · targeted vector search                        │   │
+                         │   │  · Kafka-expert system prompt                    │   │
+                         │   │  · root cause analysis + runbooks                │   │
+                         │   └──────────────────────────────────────────────────┘   │
+                         └──────────────────────────────────────────────────────────┘
 ```
 
-**The "agentic" moment:** the router's decision reads `blast_radius_report.affected_departments`
-from state — data retrieved by the triage agent from Neo4j. Retrieval *informs* routing,
-which *determines* what gets retrieved next.
+**The "agentic" moment:** the router reads `blast_radius_report.affected_departments`
+from shared state — data that the triage agent retrieved from Neo4j.
+Retrieval *informs* routing, which *determines* what gets retrieved next.
 
 ---
 
 ## Infrastructure Topology
 
-20 services across 5 departments, seeded into both Qdrant and Neo4j from the
-same source (`src/infrastructure/topology.py`):
+20 services across 5 departments, seeded into both Qdrant and Neo4j
+from a single source of truth at `src/infrastructure/topology.py`:
 
 ```
-platform:  api-gateway ─→ auth-service, config-service, service-mesh
-data:      service-mesh ─→ postgres-primary, redis-cache, kafka-broker
-product:   kafka-broker ─→ order-service, payment-service, notification-service
-ml:        postgres-primary ─→ feature-store ─→ model-serving, experiment-tracker
-infra:     k8s-controller ─→ monitoring-agent, ci-runner, dns-resolver
+  platform ──── api-gateway ──▶ auth-service
+                             ──▶ config-service
+                             ──▶ service-mesh
+                                      │
+  data ─────────────────────────────  ▼
+                             ──▶ postgres-primary
+                             ──▶ redis-cache
+                             ──▶ kafka-broker
+                                      │
+  product ──────────────────────────  ▼
+                             ──▶ order-service
+                             ──▶ payment-service
+                             ──▶ notification-service
+
+  ml ─────── postgres-primary ──▶ feature-store ──▶ model-serving
+                                                ──▶ experiment-tracker
+
+  infra ───── k8s-controller ──▶ monitoring-agent
+                              ──▶ ci-runner
+                              ──▶ dns-resolver
 ```
 
-Adding a service to `topology.py` and re-seeding (`make seed`) automatically
+Adding a service to `topology.py` and re-running `make seed` automatically
 updates both stores — no agent code changes required.
 
 ---
@@ -142,38 +185,46 @@ updates both stores — no agent code changes required.
 ```
 src/
 ├── infrastructure/
-│   ├── topology.py          # 20 services, 5 departments — ground truth
-│   ├── models.py            # Service, Incident, BlastRadiusReport, Severity
-│   └── mock_apis.py         # incident templates
+│   ├── topology.py          ← 20 services, 5 departments — single source of truth
+│   ├── models.py            ← Service, Incident, BlastRadiusReport, Severity
+│   └── mock_apis.py         ← incident templates for testing
+│
 ├── memory/
-│   ├── config.py            # Mem0 + Neo4j driver setup
-│   ├── graph.py             # seed/search Qdrant; neighborhood Cypher query
-│   └── blast_radius.py      # DEPENDS_ON*1..4 traversal, severity estimation
+│   ├── config.py            ← Mem0 + Neo4j driver setup
+│   ├── graph.py             ← seed/search Qdrant; neighborhood Cypher queries
+│   └── blast_radius.py      ← DEPENDS_ON*1..4 traversal, severity estimation
+│
 ├── agents/
-│   ├── state.py             # TriageState (shared across all nodes)
-│   ├── triage.py            # vector search + graph queries + LLM classify
-│   ├── router.py            # reads blast_radius_report, picks specialist
-│   ├── graph.py             # LangGraph: triage → router → specialist → END
-│   └── specialists/         # platform, data, product, ml, infra
+│   ├── state.py             ← TriageState — shared across all LangGraph nodes
+│   ├── triage.py            ← vector search + graph queries + LLM classification
+│   ├── router.py            ← reads blast_radius_report, picks specialist
+│   ├── graph.py             ← LangGraph: triage → router → specialist → END
+│   └── specialists/         ← platform · data · product · ml · infra
+│       ├── platform.py
+│       ├── data.py
+│       ├── product.py
+│       ├── ml.py
+│       └── infra.py
+│
 └── tui/
-    ├── events.py            # emit() / register_handler() event bus
-    ├── context.py           # thread-local current_node tracking
-    └── display.py           # TriageTUI Rich live display
+    ├── events.py            ← emit() / register_handler() event bus
+    ├── context.py           ← thread-local current_node tracking
+    └── display.py           ← TriageTUI Rich live display
 
 scripts/
-├── run_plain_rag.py         # make rag
-├── run_graph_rag.py         # make graph-rag
-└── run_triage_tui.py        # make tui
+├── run_plain_rag.py         ← make rag
+├── run_graph_rag.py         ← make graph-rag
+└── run_triage_tui.py        ← make tui
 ```
 
-Every event shown in the TUI corresponds to exactly one `emit()` call in the
+Every event shown in the TUI maps to exactly one `emit()` call in the
 memory or agent layer — traceable line by line.
 
 ---
 
 ## Configuration
 
-`.env` file (created by `make setup` from `.env.example`):
+`.env` is created by `make setup` from `.env.example`. Override any value:
 
 | Variable | Default | Description |
 |:--|:--|:--|
@@ -191,11 +242,17 @@ memory or agent layer — traceable line by line.
 ## Development
 
 ```bash
-make test      # pytest
-make lint      # ruff
+make test      # run pytest
+make lint      # run ruff
 make check     # lint + test
 make stop      # stop Docker services
 make clean     # remove venv + volumes
 ```
 
+---
+
+<div align="center">
+
 See [`WORKSHOP.md`](WORKSHOP.md) for guided exercises and extension challenges.
+
+</div>
