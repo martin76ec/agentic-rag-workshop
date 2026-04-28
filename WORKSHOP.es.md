@@ -27,11 +27,11 @@
 
 [🎬&nbsp;Escenario](#-el-escenario) &nbsp;•&nbsp;
 [🗺️&nbsp;Modos](#%EF%B8%8F-los-tres-modos) &nbsp;•&nbsp;
-[0️⃣&nbsp;Setup](#0%EF%B8%8F⃣-parte-0--configuración-5-min) &nbsp;•&nbsp;
-[1️⃣&nbsp;Plain&nbsp;RAG](#1%EF%B8%8F⃣-parte-1--plain-rag-20-min) &nbsp;•&nbsp;
-[2️⃣&nbsp;Graph&nbsp;RAG](#2%EF%B8%8F⃣-parte-2--graph-rag-20-min) &nbsp;•&nbsp;
-[3️⃣&nbsp;Agentic&nbsp;RAG](#3%EF%B8%8F⃣-parte-3--agentic-rag-25-min) &nbsp;•&nbsp;
-[4️⃣&nbsp;Explorar](#4%EF%B8%8F⃣-parte-4--exploración-15-min) &nbsp;•&nbsp;
+[0️⃣&nbsp;Setup](#0%EF%B8%8F%E2%83%A3-parte-0--configuraci%C3%B3n-5-min) &nbsp;•&nbsp;
+[1️⃣&nbsp;Plain&nbsp;RAG](#1%EF%B8%8F%E2%83%A3-parte-1--plain-rag-20-min) &nbsp;•&nbsp;
+[2️⃣&nbsp;Graph&nbsp;RAG](#2%EF%B8%8F%E2%83%A3-parte-2--graph-rag-20-min) &nbsp;•&nbsp;
+[3️⃣&nbsp;Agentic&nbsp;RAG](#3%EF%B8%8F%E2%83%A3-parte-3--agentic-rag-25-min) &nbsp;•&nbsp;
+[4️⃣&nbsp;Explorar](#4%EF%B8%8F%E2%83%A3-parte-4--exploraci%C3%B3n-15-min) &nbsp;•&nbsp;
 [🏁&nbsp;Resumen](#-resumen)
 
 </div>
@@ -42,7 +42,9 @@
 <!--                           ✦   EL ESCENARIO   ✦                          -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-## 🎬 El Escenario
+<h2 id="-el-escenario" align="center">
+<img src="https://capsule-render.vercel.app/api?type=waving&color=F43F5E&height=44&section=header&text=%F0%9F%8E%AC%20El%20Escenario&fontColor=ffffff&fontSize=22&fontAlignY=50&desc=PagerDuty%20te%20despert%C3%B3%20a%20las%203am&descSize=11&descAlignY=68&descColor=e2e2e2&animation=fadeIn" alt="El Escenario" width="100%"/>
+</h2>
 
 <div align="center">
 
@@ -79,7 +81,9 @@ dónde termina la *"recuperación"* y dónde comienza lo *"agéntico"*.
 <!--                          ✦   LOS TRES MODOS   ✦                         -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-## 🗺️ Los Tres Modos
+<h2 id="%EF%B8%8F-los-tres-modos" align="center">
+<img src="https://capsule-render.vercel.app/api?type=waving&color=8B5CF6&height=44&section=header&text=%F0%9F%97%BA%EF%B8%8F%20Los%20Tres%20Modos&fontColor=ffffff&fontSize=22&fontAlignY=50&desc=Mismo%20incidente.%20Tres%20arquitecturas%20de%20retrieval.&descSize=11&descAlignY=68&descColor=e2e2e2&animation=fadeIn" alt="Los Tres Modos" width="100%"/>
+</h2>
 
 <div align="center">
 
@@ -161,9 +165,9 @@ flowchart LR
 <!--                            ✦   PARTE 0: SETUP   ✦                       -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-## 0️⃣ Parte 0 — Configuración <sub>(5 min)</sub>
-
-<a href="#"><img src="https://img.shields.io/badge/Parte%200-Configuración-8B5CF6?style=flat-square&labelColor=0f0f1e"/></a>
+<h2 id="0%EF%B8%8F%E2%83%A3-parte-0--configuraci%C3%B3n-5-min" align="center">
+<img src="https://capsule-render.vercel.app/api?type=waving&color=8B5CF6&height=44&section=header&text=0%EF%B8%8F%E2%83%A3%20Parte%200%20%E2%80%94%20Configuraci%C3%B3n&fontColor=ffffff&fontSize=22&fontAlignY=50&desc=5%20min%20%E2%80%94%20levant%C3%A1%20Qdrant%20%2B%20Neo4j%2C%20carg%C3%A1%20datos&descSize=11&descAlignY=68&descColor=e2e2e2&animation=fadeIn" alt="Parte 0 — Configuración" width="100%"/>
+</h2>
 
 Si todavía no lo hiciste:
 
@@ -191,9 +195,10 @@ make browse-graph   # 🌐 abre el navegador de Neo4j en http://localhost:7474
 <!--                          ✦   PARTE 1: PLAIN RAG   ✦                     -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-## 1️⃣ Parte 1 — Plain RAG <sub>(20 min)</sub>
+<h2 id="1%EF%B8%8F%E2%83%A3-parte-1--plain-rag-20-min" align="center">
+<img src="https://capsule-render.vercel.app/api?type=waving&color=06B6D4&height=44&section=header&text=1%EF%B8%8F%E2%83%A3%20Parte%201%20%E2%80%94%20Plain%20RAG&fontColor=ffffff&fontSize=22&fontAlignY=50&desc=20%20min%20%E2%80%94%20una%20b%C3%BAsqueda%20vectorial%2C%20una%20llamada%20al%20LLM&descSize=11&descAlignY=68&descColor=e2e2e2&animation=fadeIn" alt="Parte 1 — Plain RAG" width="100%"/>
+</h2>
 
-<a href="#"><img src="https://img.shields.io/badge/Parte%201-Plain%20RAG-06B6D4?style=flat-square&labelColor=0f0f1e"/></a>
 <img src="https://img.shields.io/badge/llamadas%20LLM-1-06B6D4?style=flat-square&labelColor=0f0f1e"/>
 <img src="https://img.shields.io/badge/pasos%20de%20retrieval-1-06B6D4?style=flat-square&labelColor=0f0f1e"/>
 
@@ -241,9 +246,10 @@ Mirá el TUI. Vas a ver exactamente **una llamada `vector`** seguida de **una ll
 <!--                          ✦   PARTE 2: GRAPH RAG   ✦                     -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-## 2️⃣ Parte 2 — Graph RAG <sub>(20 min)</sub>
+<h2 id="2%EF%B8%8F%E2%83%A3-parte-2--graph-rag-20-min" align="center">
+<img src="https://capsule-render.vercel.app/api?type=waving&color=8B5CF6&height=44&section=header&text=2%EF%B8%8F%E2%83%A3%20Parte%202%20%E2%80%94%20Graph%20RAG&fontColor=ffffff&fontSize=22&fontAlignY=50&desc=20%20min%20%E2%80%94%20agreg%C3%A1%20vecindario%20%2B%20blast%20radius%20de%20Neo4j&descSize=11&descAlignY=68&descColor=e2e2e2&animation=fadeIn" alt="Parte 2 — Graph RAG" width="100%"/>
+</h2>
 
-<a href="#"><img src="https://img.shields.io/badge/Parte%202-Graph%20RAG-8B5CF6?style=flat-square&labelColor=0f0f1e"/></a>
 <img src="https://img.shields.io/badge/llamadas%20LLM-1-8B5CF6?style=flat-square&labelColor=0f0f1e"/>
 <img src="https://img.shields.io/badge/pasos%20de%20retrieval-3-8B5CF6?style=flat-square&labelColor=0f0f1e"/>
 
@@ -324,9 +330,10 @@ Deberías ver la cascada visualizada como un grafo. ✨
 <!--                         ✦   PARTE 3: AGENTIC RAG   ✦                    -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-## 3️⃣ Parte 3 — Agentic RAG <sub>(25 min)</sub>
+<h2 id="3%EF%B8%8F%E2%83%A3-parte-3--agentic-rag-25-min" align="center">
+<img src="https://capsule-render.vercel.app/api?type=waving&color=EC4899&height=44&section=header&text=3%EF%B8%8F%E2%83%A3%20Parte%203%20%E2%80%94%20Agentic%20RAG&fontColor=ffffff&fontSize=22&fontAlignY=50&desc=25%20min%20%E2%80%94%20triage%20%E2%86%92%20ruteo%20%E2%86%92%20especialista&descSize=11&descAlignY=68&descColor=e2e2e2&animation=fadeIn" alt="Parte 3 — Agentic RAG" width="100%"/>
+</h2>
 
-<a href="#"><img src="https://img.shields.io/badge/Parte%203-Agentic%20RAG-EC4899?style=flat-square&labelColor=0f0f1e"/></a>
 <img src="https://img.shields.io/badge/llamadas%20LLM-2-EC4899?style=flat-square&labelColor=0f0f1e"/>
 <img src="https://img.shields.io/badge/pasos%20de%20retrieval-4–5-EC4899?style=flat-square&labelColor=0f0f1e"/>
 
@@ -410,9 +417,9 @@ make tui kafka-broker        # 🌈 pestaña 3
 <!--                         ✦   PARTE 4: EXPLORACIÓN   ✦                    -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-## 4️⃣ Parte 4 — Exploración <sub>(15 min)</sub>
-
-<a href="#"><img src="https://img.shields.io/badge/Parte%204-Exploración-F43F5E?style=flat-square&labelColor=0f0f1e"/></a>
+<h2 id="4%EF%B8%8F%E2%83%A3-parte-4--exploraci%C3%B3n-15-min" align="center">
+<img src="https://capsule-render.vercel.app/api?type=waving&color=F43F5E&height=44&section=header&text=4%EF%B8%8F%E2%83%A3%20Parte%204%20%E2%80%94%20Exploraci%C3%B3n&fontColor=ffffff&fontSize=22&fontAlignY=50&desc=15%20min%20%E2%80%94%20romp%C3%A9%2C%20agreg%C3%A1%2C%20traz%C3%A1%20c%C3%B3digo&descSize=11&descAlignY=68&descColor=e2e2e2&animation=fadeIn" alt="Parte 4 — Exploración" width="100%"/>
+</h2>
 
 <details open>
   <summary><b>🎯 Probá distintos puntos de falla</b></summary>
@@ -516,7 +523,9 @@ consulta de grafo lo descubre automáticamente — *no tocaste código de agente
 <!--                              ✦   RESUMEN   ✦                            -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-## 🏁 Resumen
+<h2 id="-resumen" align="center">
+<img src="https://capsule-render.vercel.app/api?type=waving&color=06B6D4&height=44&section=header&text=%F0%9F%8F%81%20Resumen&fontColor=ffffff&fontSize=22&fontAlignY=50&desc=D%C3%B3nde%20vive%20todo%20%2B%20la%20respuesta%20en%20una%20l%C3%ADnea&descSize=11&descAlignY=68&descColor=e2e2e2&animation=fadeIn" alt="Resumen" width="100%"/>
+</h2>
 
 <div align="center">
 
@@ -588,7 +597,9 @@ consulta de grafo lo descubre automáticamente — *no tocaste código de agente
 <!--                       ✦   DESAFÍOS ADICIONALES   ✦                      -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-## 🚀 Desafíos Adicionales
+<h2 id="-desaf%C3%ADos-adicionales" align="center">
+<img src="https://capsule-render.vercel.app/api?type=waving&color=EC4899&height=44&section=header&text=%F0%9F%9A%80%20Desaf%C3%ADos%20Adicionales&fontColor=ffffff&fontSize=22&fontAlignY=50&desc=Segu%C3%AD%20%E2%80%94%20reflexi%C3%B3n%2C%20fan-out%2C%20memoria%2C%20LLM%20reasoning&descSize=11&descAlignY=68&descColor=e2e2e2&animation=fadeIn" alt="Desafíos Adicionales" width="100%"/>
+</h2>
 
 > *Si terminaste rápido o querés seguir después del taller.*
 
