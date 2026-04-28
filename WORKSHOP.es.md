@@ -97,17 +97,17 @@ dónde termina la *"recuperación"* y dónde comienza lo *"agéntico"*.
 <tr>
 <td align="center" width="33%">
 
-<img src="https://img.shields.io/badge/🔵%20Modo%201-Plain%20RAG-06B6D4?style=for-the-badge&labelColor=0f0f1e" alt="Plain RAG"/>
+<img src="https://img.shields.io/badge/Modo%201-Plain%20RAG-06B6D4?style=for-the-badge&labelColor=0f0f1e" alt="Plain RAG"/>
 
 </td>
 <td align="center" width="33%">
 
-<img src="https://img.shields.io/badge/🟣%20Modo%202-Graph%20RAG-8B5CF6?style=for-the-badge&labelColor=0f0f1e" alt="Graph RAG"/>
+<img src="https://img.shields.io/badge/Modo%202-Graph%20RAG-8B5CF6?style=for-the-badge&labelColor=0f0f1e" alt="Graph RAG"/>
 
 </td>
 <td align="center" width="33%">
 
-<img src="https://img.shields.io/badge/🌈%20Modo%203-Agentic%20RAG-EC4899?style=for-the-badge&labelColor=0f0f1e" alt="Agentic RAG"/>
+<img src="https://img.shields.io/badge/Modo%203-Agentic%20RAG-EC4899?style=for-the-badge&labelColor=0f0f1e" alt="Agentic RAG"/>
 
 </td>
 </tr>
@@ -123,32 +123,32 @@ flowchart LR
     classDef agentic  fill:#0f0f1e,stroke:#EC4899,stroke-width:2px,color:#EC4899
     classDef result   fill:#1a1a2e,stroke:#F43F5E,stroke-width:2px,color:#fff
 
-    I([🚨 Incidente<br/>kafka-broker]):::incident
+    I([Incidente<br/>kafka-broker]):::incident
 
-    subgraph P [" 🔵 Plain RAG "]
+    subgraph P [" Plain RAG "]
         direction TB
-        P1[🔍 Búsqueda Vectorial]:::plain
-        P2[🧠 LLM]:::plain
-        P3([📄 Respuesta]):::result
+        P1[Búsqueda Vectorial]:::plain
+        P2[LLM]:::plain
+        P3([Respuesta]):::result
         P1 --> P2 --> P3
     end
 
-    subgraph G [" 🟣 Graph RAG "]
+    subgraph G [" Graph RAG "]
         direction TB
-        G1[🔍 Búsqueda Vectorial]:::graphmode
-        G2[🕸️ Neo4j · Vecindario]:::graphmode
-        G3[💥 Neo4j · Blast Radius]:::graphmode
-        G4[🧠 LLM]:::graphmode
-        G5([📄 Respuesta]):::result
+        G1[Búsqueda Vectorial]:::graphmode
+        G2[Neo4j Vecindario]:::graphmode
+        G3[Neo4j Blast Radius]:::graphmode
+        G4[LLM]:::graphmode
+        G5([Respuesta]):::result
         G1 --> G2 --> G3 --> G4 --> G5
     end
 
-    subgraph A [" 🌈 Agentic RAG "]
+    subgraph A [" Agentic RAG "]
         direction TB
-        A1[🧠 Agente Triage<br/><sub>vector + grafo</sub>]:::agentic
-        A2[🔀 Agente Router<br/><sub>elige experto</sub>]:::agentic
-        A3[🎯 Especialista<br/><sub>vector + LLM experto</sub>]:::agentic
-        A4([📊 Reporte Final]):::result
+        A1[Agente Triage<br/><sub>vector + grafo</sub>]:::agentic
+        A2[Agente Router<br/><sub>elige experto</sub>]:::agentic
+        A3[Especialista<br/><sub>vector + LLM experto</sub>]:::agentic
+        A4([Reporte Final]):::result
         A1 --> A2 --> A3 --> A4
     end
 
@@ -169,15 +169,15 @@ flowchart LR
 Si todavía no lo hiciste:
 
 ```bash
-make setup    # 🚀 levanta Qdrant + Neo4j, crea .env, instala deps
-make seed     # 🌱 carga 20 servicios en Qdrant y Neo4j
+make setup    # levanta Qdrant + Neo4j, crea .env, instala deps
+make seed     # carga 20 servicios en Qdrant y Neo4j
 ```
 
 Verificá que ambos stores tengan datos:
 
 ```bash
-make inspect-mem    # 🔍 muestra el contenido de Qdrant (debería listar 20 servicios)
-make browse-graph   # 🌐 abre el navegador de Neo4j en http://localhost:7474
+make inspect-mem    # muestra el contenido de Qdrant (debería listar 20 servicios)
+make browse-graph   # abre el navegador de Neo4j en http://localhost:7474
                     # corré: MATCH (n) RETURN n   para ver la topología
 ```
 
@@ -207,7 +207,7 @@ make rag kafka-broker
 Mirá el TUI. Vas a ver exactamente **una llamada `vector`** seguida de **una llamada `llm`**.
 
 <details open>
-  <summary><b>👀 Qué observar</b></summary>
+  <summary><b>Qué observar</b></summary>
   <br/>
 
 - ¿Qué devolvió la búsqueda vectorial? (top resultados por score)
@@ -218,7 +218,7 @@ Mirá el TUI. Vas a ver exactamente **una llamada `vector`** seguida de **una ll
 </details>
 
 <details>
-  <summary><b>💬 Preguntas para discutir</b></summary>
+  <summary><b>Preguntas para discutir</b></summary>
   <br/>
 
 1. Al LLM se le dijo que kafka-broker es un cluster de Kafka. **¿De dónde salió eso?** *(Mirá el resultado vectorial — vino de Qdrant, no de los pesos del LLM.)*
@@ -258,14 +258,14 @@ Mirá el TUI. Ahora vas a ver:
 
 | Paso | Tool | Descripción |
 |:--:|:--|:--|
-| 1️⃣ | `vector` | La misma búsqueda en Qdrant que antes |
-| 2️⃣ | `graph · vecindario` | Dependencias directas desde Neo4j |
-| 3️⃣ | `graph · blast radius` | Recorrido de caminos de longitud variable |
+| 1 | `vector` | La misma búsqueda en Qdrant que antes |
+| 2 | `graph · vecindario` | Dependencias directas desde Neo4j |
+| 3 | `graph · blast radius` | Recorrido de caminos de longitud variable |
 
 <br/>
 
 <details open>
-  <summary><b>👀 Qué cambió respecto a Plain RAG</b></summary>
+  <summary><b>Qué cambió respecto a Plain RAG</b></summary>
   <br/>
 
 <div align="center">
@@ -285,7 +285,7 @@ Mirá el TUI. Ahora vas a ver:
 </details>
 
 <details>
-  <summary><b>🔮 Entendiendo el Cypher</b></summary>
+  <summary><b>Entendiendo el Cypher</b></summary>
   <br/>
 
 La consulta de blast radius es:
@@ -299,14 +299,14 @@ Esto encuentra todo servicio `aff` que tenga un camino dirigido `DEPENDS_ON`
 (hasta 4 saltos) que lleve a `kafka-broker`. Si `kafka-broker` falla, todos
 esos servicios caen con él.
 
-🧪 Probalo en el navegador de Neo4j:
+Probalo en el navegador de Neo4j:
 
 ```cypher
 MATCH path = (aff:Service)-[:DEPENDS_ON*1..4]->(root:Service {name: 'kafka-broker'})
 RETURN path
 ```
 
-Deberías ver la cascada visualizada como un grafo. ✨
+Deberías ver la cascada visualizada como un grafo.
 
 </details>
 
@@ -338,7 +338,7 @@ Deberías ver la cascada visualizada como un grafo. ✨
 make tui kafka-broker
 ```
 
-Ahora mirá el pipeline completo desplegarse en tiempo real. 🎥
+Ahora mirá el pipeline completo desplegarse en tiempo real.
 
 <br/>
 
@@ -348,17 +348,17 @@ Ahora mirá el pipeline completo desplegarse en tiempo real. 🎥
   <tr>
     <td align="center" width="33%" valign="top">
       <img src="https://img.icons8.com/fluency/72/inspection.png" width="48" alt=""/><br/>
-      <b>🧠 Agente Triage</b><br/>
+      <b>Agente Triage</b><br/>
       <sub>2 consultas de grafo (vecindario +<br/>blast radius) más una vectorial.<br/>El LLM clasifica <b>servicio · severidad ·<br/>departamento</b> — esa decisión<br/>determina todo lo que sigue.</sub>
     </td>
     <td align="center" width="33%" valign="top">
       <img src="https://img.icons8.com/fluency/72/route.png" width="48" alt=""/><br/>
-      <b>🔀 Agente Router</b><br/>
+      <b>Agente Router</b><br/>
       <sub>Lee los departamentos del<br/><code>blast_radius_report</code> en el estado.<br/>Elige: <b>especialista data</b>.<br/>Marca <code>CROSS-DEPARTMENT</code> si<br/>hay más de uno impactado.</sub>
     </td>
     <td align="center" width="33%" valign="top">
       <img src="https://img.icons8.com/fluency/72/expert.png" width="48" alt=""/><br/>
-      <b>🎯 Especialista [data]</b><br/>
+      <b>Especialista [data]</b><br/>
       <sub>Una <b>segunda</b> búsqueda vectorial<br/>dirigida a conocimiento de data.<br/>Una <b>segunda</b> llamada al LLM con<br/>system prompt: <i>"sos dueño de Kafka,<br/>Postgres, Redis, ClickHouse"</i>.</sub>
     </td>
   </tr>
@@ -369,20 +369,20 @@ Ahora mirá el pipeline completo desplegarse en tiempo real. 🎥
 <br/>
 
 <details open>
-  <summary><b>📊 Comparar las tres respuestas lado a lado</b></summary>
+  <summary><b>Comparar las tres respuestas lado a lado</b></summary>
   <br/>
 
 Corré cada modo para el mismo servicio en pestañas separadas:
 
 ```bash
-make rag kafka-broker        # 🔵 pestaña 1
-make graph-rag kafka-broker  # 🟣 pestaña 2
-make tui kafka-broker        # 🌈 pestaña 3
+make rag kafka-broker        # pestaña 1
+make graph-rag kafka-broker  # pestaña 2
+make tui kafka-broker        # pestaña 3
 ```
 
 <div align="center">
 
-| Pregunta | 🔵 Plain | 🟣 Graph | 🌈 Agentic |
+| Pregunta | Plain | Graph | Agentic |
 |:--|:--:|:--:|:--:|
 | ¿Qué servicios están en riesgo? | Vago | Exacto (5 nombrados) | Exacto + departamentos |
 | ¿A quién paginar? | Genérico | Genérico | `data-oncall` específicamente |
@@ -403,7 +403,7 @@ make tui kafka-broker        # 🌈 pestaña 3
 >
 > El retrieval *informa* el routing, que *determina* qué se recupera después.
 >
-> 💜 **El retrieval no es un paso fijo. Es una decisión que toma el agente basándose en lo que ya aprendió.**
+> **El retrieval no es un paso fijo. Es una decisión que toma el agente basándose en lo que ya aprendió.**
 
 <br/>
 
@@ -415,14 +415,14 @@ make tui kafka-broker        # 🌈 pestaña 3
 <img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=F43F5E&height=56&section=header&text=4%EF%B8%8F%E2%83%A3%20Parte%204%20%E2%80%94%20Exploraci%C3%B3n&fontColor=ffffff&fontSize=22&fontAlignY=36&desc=15%20min%20%E2%80%94%20romp%C3%A9%2C%20agreg%C3%A1%2C%20traz%C3%A1%20c%C3%B3digo&descAlignY=68&descSize=13&descColor=e2e2e2&animation=fadeIn" alt="Parte 4 — Exploración"/>
 
 <details open>
-  <summary><b>🎯 Probá distintos puntos de falla</b></summary>
+  <summary><b>Probá distintos puntos de falla</b></summary>
   <br/>
 
 ```bash
-make tui api-gateway          # 🏛  platform tier-1 — cascada a casi todo
-make tui k8s-controller       # 🛡  infra — cascada a todos los departamentos
-make tui experiment-tracker   # 🧪  ml tier-3 — blast radius chico
-make tui postgres-primary     # 💾  data — blast radius grande vía product
+make tui api-gateway          # platform tier-1 — cascada a casi todo
+make tui k8s-controller       # infra — cascada a todos los departamentos
+make tui experiment-tracker   # ml tier-3 — blast radius chico
+make tui postgres-primary     # data — blast radius grande vía product
 ```
 
 Para cada corrida, **predecí antes de que termine**:
@@ -431,12 +431,12 @@ Para cada corrida, **predecí antes de que termine**:
 - ¿Cuántos servicios hay en el blast radius?
 - ¿Qué departamentos están afectados?
 
-Después verificá tu predicción en el TUI. 🔮
+Después verificá tu predicción en el TUI.
 
 </details>
 
 <details>
-  <summary><b>🗺️ Leé el camino del código para un incidente</b></summary>
+  <summary><b>Leé el camino del código para un incidente</b></summary>
   <br/>
 
 Elegí `kafka-broker` y trazá qué pasa:
@@ -451,12 +451,12 @@ src/agents/specialists/data.py    →  llama a search_services() de nuevo (query
 src/tui/display.py                →  renderiza todo lo que ves en la terminal
 ```
 
-Cada evento en el TUI corresponde a **exactamente una** de estas llamadas. ✨
+Cada evento en el TUI corresponde a **exactamente una** de estas llamadas.
 
 </details>
 
 <details>
-  <summary><b>✏️ Modificá algo — Fácil: agregar un template de incidente</b></summary>
+  <summary><b>Modificá algo — Fácil: agregar un template de incidente</b></summary>
   <br/>
 
 Abrí `src/infrastructure/mock_apis.py` y agregá a `INCIDENT_TEMPLATES`:
@@ -474,7 +474,7 @@ Después corré `make tui kafka-broker 8` *(índice 8 = tu nuevo template)*.
 </details>
 
 <details>
-  <summary><b>🛠️ Modificá algo — Medio: agregar un servicio</b></summary>
+  <summary><b>Modificá algo — Medio: agregar un servicio</b></summary>
   <br/>
 
 **1.** Agregá a `src/infrastructure/topology.py`:
@@ -505,7 +505,7 @@ make seed
 make tui audit-log
 ```
 
-🎉 **Observá:** el blast radius de `kafka-broker` ahora incluye `audit-log`. La
+**Observá:** el blast radius de `kafka-broker` ahora incluye `audit-log`. La
 consulta de grafo lo descubre automáticamente — *no tocaste código de agentes*.
 
 </details>
@@ -527,31 +527,31 @@ consulta de grafo lo descubre automáticamente — *no tocaste código de agente
     <th>Dónde vive</th>
   </tr>
   <tr>
-    <td>🔵 Store vectorial (Qdrant)</td>
+    <td>Store vectorial (Qdrant)</td>
     <td><code>src/memory/graph.py</code> → <code>search_services()</code></td>
   </tr>
   <tr>
-    <td>🟣 Grafo de conocimiento (Neo4j)</td>
+    <td>Grafo de conocimiento (Neo4j)</td>
     <td><code>src/memory/graph.py</code> → <code>query_service_graph_context()</code></td>
   </tr>
   <tr>
-    <td>🕸️ Recorrido de grafo (Cypher)</td>
+    <td>Recorrido de grafo (Cypher)</td>
     <td><code>src/memory/blast_radius.py</code> → <code>_cypher_blast_radius()</code></td>
   </tr>
   <tr>
-    <td>📦 Estado del agente</td>
+    <td>Estado del agente</td>
     <td><code>src/agents/state.py</code> → <code>TriageState</code></td>
   </tr>
   <tr>
-    <td>🔀 Decisión de routing</td>
+    <td>Decisión de routing</td>
     <td><code>src/agents/router.py</code> → lee blast radius del estado</td>
   </tr>
   <tr>
-    <td>🎯 Despacho a especialistas</td>
+    <td>Despacho a especialistas</td>
     <td><code>src/agents/specialist_coordinator.py</code></td>
   </tr>
   <tr>
-    <td>🎨 Eventos del TUI en vivo</td>
+    <td>Eventos del TUI en vivo</td>
     <td><code>src/tui/events.py</code> → <code>emit()</code> en cada paso</td>
   </tr>
 </table>
@@ -560,22 +560,22 @@ consulta de grafo lo descubre automáticamente — *no tocaste código de agente
 
 <br/>
 
-### 💡 La respuesta en una línea
+### La respuesta en una línea
 
 <div align="center">
 
 <table>
   <tr>
     <td align="center" width="33%">
-      🔵 <b>Plain RAG</b><br/>
+      <b>Plain RAG</b><br/>
       <sub>recupera <b>hechos</b></sub>
     </td>
     <td align="center" width="33%">
-      🟣 <b>Graph RAG</b><br/>
+      <b>Graph RAG</b><br/>
       <sub>recupera hechos <b>+ relaciones</b></sub>
     </td>
     <td align="center" width="33%">
-      🌈 <b>Agentic RAG</b><br/>
+      <b>Agentic RAG</b><br/>
       <sub>decide <b>qué · de dónde · quién actúa</b></sub>
     </td>
   </tr>
@@ -595,7 +595,7 @@ consulta de grafo lo descubre automáticamente — *no tocaste código de agente
 > *Si terminaste rápido o querés seguir después del taller.*
 
 <details>
-  <summary><b>🔁 1. Reflexionar y volver a recuperar</b></summary>
+  <summary><b>1. Reflexionar y volver a recuperar</b></summary>
   <br/>
 
 Después de que el especialista genere su análisis, agregá un **paso de reflexión**
@@ -605,18 +605,18 @@ más específica si el análisis parece superficial.
 </details>
 
 <details>
-  <summary><b>🌐 2. Incidente cross-departamento — fan out</b></summary>
+  <summary><b>2. Incidente cross-departamento — fan out</b></summary>
   <br/>
 
 Disparado un fallo de `k8s-controller`. El router lo marca como `CROSS-DEPARTMENT`.
 ¿Y si quisieras llamar a **todos los especialistas afectados en paralelo**?
 
-> 💡 **Pista:** [`langgraph.graph.Send`](https://langchain-ai.github.io/langgraph/concepts/low_level/#send)
+> **Pista:** [`langgraph.graph.Send`](https://langchain-ai.github.io/langgraph/concepts/low_level/#send)
 
 </details>
 
 <details>
-  <summary><b>🧠 3. Memoria entre incidentes</b></summary>
+  <summary><b>3. Memoria entre incidentes</b></summary>
   <br/>
 
 Después de cada triage, escribí el análisis del especialista de vuelta en Qdrant
@@ -626,7 +626,7 @@ el triage lo recupera como **contexto previo**. ¿Mejora la respuesta?
 </details>
 
 <details>
-  <summary><b>🎲 4. Reemplazar Cypher por razonamiento del LLM</b></summary>
+  <summary><b>4. Reemplazar Cypher por razonamiento del LLM</b></summary>
   <br/>
 
 En `blast_radius.py`, comentá `_cypher_blast_radius()` y reemplazalo por un
@@ -645,9 +645,9 @@ Comparalo con la verdad de Cypher en términos de precisión.
 
 <br/>
 
-### 🎉 ¡Lo lograste!
+### Lo lograste!
 
-Si te hizo *click*, **dejá una ⭐ en el repo** y compartí lo que construiste.
+Si te hizo *click*, **dejá una estrella en el repo** y compartí lo que construiste.
 
 <br/>
 
@@ -659,6 +659,6 @@ Si te hizo *click*, **dejá una ⭐ en el repo** y compartí lo que construiste.
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=12,20,6&height=120&section=footer&animation=fadeIn" alt="banner footer" width="100%"/>
 
-<sub>Hecho con 💜 &nbsp;•&nbsp; Workshop v1.0.0 &nbsp;•&nbsp; <a href="#-el-escenario">Arriba ↑</a></sub>
+<sub>Hecho con &nbsp;•&nbsp; Workshop v1.0.0 &nbsp;•&nbsp; <a href="#-el-escenario">Arriba</a></sub>
 
 </div>

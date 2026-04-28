@@ -97,17 +97,17 @@ more context and makes better decisions. By the end you'll see exactly where
 <tr>
 <td align="center" width="33%">
 
-<img src="https://img.shields.io/badge/🔵%20Mode%201-Plain%20RAG-06B6D4?style=for-the-badge&labelColor=0f0f1e" alt="Plain RAG"/>
+<img src="https://img.shields.io/badge/Mode%201-Plain%20RAG-06B6D4?style=for-the-badge&labelColor=0f0f1e" alt="Plain RAG"/>
 
 </td>
 <td align="center" width="33%">
 
-<img src="https://img.shields.io/badge/🟣%20Mode%202-Graph%20RAG-8B5CF6?style=for-the-badge&labelColor=0f0f1e" alt="Graph RAG"/>
+<img src="https://img.shields.io/badge/Mode%202-Graph%20RAG-8B5CF6?style=for-the-badge&labelColor=0f0f1e" alt="Graph RAG"/>
 
 </td>
 <td align="center" width="33%">
 
-<img src="https://img.shields.io/badge/🌈%20Mode%203-Agentic%20RAG-EC4899?style=for-the-badge&labelColor=0f0f1e" alt="Agentic RAG"/>
+<img src="https://img.shields.io/badge/Mode%203-Agentic%20RAG-EC4899?style=for-the-badge&labelColor=0f0f1e" alt="Agentic RAG"/>
 
 </td>
 </tr>
@@ -123,32 +123,32 @@ flowchart LR
     classDef agentic  fill:#0f0f1e,stroke:#EC4899,stroke-width:2px,color:#EC4899
     classDef result   fill:#1a1a2e,stroke:#F43F5E,stroke-width:2px,color:#fff
 
-    I([🚨 Incident<br/>kafka-broker]):::incident
+    I([Incident<br/>kafka-broker]):::incident
 
-    subgraph P [" 🔵 Plain RAG "]
+    subgraph P [" Plain RAG "]
         direction TB
-        P1[🔍 Vector Search]:::plain
-        P2[🧠 LLM]:::plain
-        P3([📄 Response]):::result
+        P1[Vector Search]:::plain
+        P2[LLM]:::plain
+        P3([Response]):::result
         P1 --> P2 --> P3
     end
 
-    subgraph G [" 🟣 Graph RAG "]
+    subgraph G [" Graph RAG "]
         direction TB
-        G1[🔍 Vector Search]:::graphmode
-        G2[🕸️ Neo4j · Neighborhood]:::graphmode
-        G3[💥 Neo4j · Blast Radius]:::graphmode
-        G4[🧠 LLM]:::graphmode
-        G5([📄 Response]):::result
+        G1[Vector Search]:::graphmode
+        G2[Neo4j Neighborhood]:::graphmode
+        G3[Neo4j Blast Radius]:::graphmode
+        G4[LLM]:::graphmode
+        G5([Response]):::result
         G1 --> G2 --> G3 --> G4 --> G5
     end
 
-    subgraph A [" 🌈 Agentic RAG "]
+    subgraph A [" Agentic RAG "]
         direction TB
-        A1[🧠 Triage Agent<br/><sub>vector + graph</sub>]:::agentic
-        A2[🔀 Router Agent<br/><sub>pick specialist</sub>]:::agentic
-        A3[🎯 Specialist<br/><sub>vector + expert LLM</sub>]:::agentic
-        A4([📊 Final Report]):::result
+        A1[Triage Agent<br/><sub>vector + graph</sub>]:::agentic
+        A2[Router Agent<br/><sub>pick specialist</sub>]:::agentic
+        A3[Specialist<br/><sub>vector + expert LLM</sub>]:::agentic
+        A4([Final Report]):::result
         A1 --> A2 --> A3 --> A4
     end
 
@@ -169,15 +169,15 @@ flowchart LR
 If you haven't already:
 
 ```bash
-make setup    # 🚀 start Qdrant + Neo4j, create .env, install deps
-make seed     # 🌱 load 20 services into Qdrant and Neo4j
+make setup    # start Qdrant + Neo4j, create .env, install deps
+make seed     # load 20 services into Qdrant and Neo4j
 ```
 
 Verify both stores have data:
 
 ```bash
-make inspect-mem    # 🔍 shows Qdrant contents (should list 20 services)
-make browse-graph   # 🌐 opens Neo4j browser at http://localhost:7474
+make inspect-mem    # shows Qdrant contents (should list 20 services)
+make browse-graph   # opens Neo4j browser at http://localhost:7474
                     # run: MATCH (n) RETURN n   to see the topology
 ```
 
@@ -207,7 +207,7 @@ make rag kafka-broker
 Watch the TUI. You'll see exactly **one `vector` tool call** followed by **one `llm` call**.
 
 <details open>
-  <summary><b>👀 What to observe</b></summary>
+  <summary><b>What to observe</b></summary>
   <br/>
 
 - What did the vector search return? (top results by score)
@@ -218,7 +218,7 @@ Watch the TUI. You'll see exactly **one `vector` tool call** followed by **one `
 </details>
 
 <details>
-  <summary><b>💬 Discussion questions</b></summary>
+  <summary><b>Discussion questions</b></summary>
   <br/>
 
 1. The LLM was told kafka-broker is a Kafka cluster. **Where did that come from?** *(Check the vector result — it came from Qdrant, not the LLM's weights.)*
@@ -258,14 +258,14 @@ Watch the TUI. Now you'll see:
 
 | Step | Tool | Description |
 |:--:|:--|:--|
-| 1️⃣ | `vector` | Same Qdrant search as before |
-| 2️⃣ | `graph · neighborhood` | Direct deps/dependents from Neo4j |
-| 3️⃣ | `graph · blast radius` | Variable-length path traversal |
+| 1 | `vector` | Same Qdrant search as before |
+| 2 | `graph · neighborhood` | Direct deps/dependents from Neo4j |
+| 3 | `graph · blast radius` | Variable-length path traversal |
 
 <br/>
 
 <details open>
-  <summary><b>👀 What changed vs. Plain RAG</b></summary>
+  <summary><b>What changed vs. Plain RAG</b></summary>
   <br/>
 
 <div align="center">
@@ -285,7 +285,7 @@ Watch the TUI. Now you'll see:
 </details>
 
 <details>
-  <summary><b>🔮 Understanding the Cypher</b></summary>
+  <summary><b>Understanding the Cypher</b></summary>
   <br/>
 
 The blast radius query is:
@@ -299,14 +299,14 @@ This finds every service `aff` that has a directed `DEPENDS_ON` path
 (up to 4 hops) leading to `kafka-broker`. If `kafka-broker` fails, all of
 those services fail with it.
 
-🧪 Try it in Neo4j browser:
+Try it in Neo4j browser:
 
 ```cypher
 MATCH path = (aff:Service)-[:DEPENDS_ON*1..4]->(root:Service {name: 'kafka-broker'})
 RETURN path
 ```
 
-You should see the cascade visualised as a graph. ✨
+You should see the cascade visualised as a graph.
 
 </details>
 
@@ -338,7 +338,7 @@ You should see the cascade visualised as a graph. ✨
 make tui kafka-broker
 ```
 
-Now watch the full pipeline unfold in real time. 🎥
+Now watch the full pipeline unfold in real time.
 
 <br/>
 
@@ -348,17 +348,17 @@ Now watch the full pipeline unfold in real time. 🎥
   <tr>
     <td align="center" width="33%" valign="top">
       <img src="https://img.icons8.com/fluency/72/inspection.png" width="48" alt=""/><br/>
-      <b>🧠 Triage Agent</b><br/>
+      <b>Triage Agent</b><br/>
       <sub>2 graph queries (neighborhood +<br/>blast radius) plus a vector search.<br/>LLM classifies <b>service · severity ·<br/>department</b> — this decision drives<br/>everything that follows.</sub>
     </td>
     <td align="center" width="33%" valign="top">
       <img src="https://img.icons8.com/fluency/72/route.png" width="48" alt=""/><br/>
-      <b>🔀 Router Agent</b><br/>
+      <b>Router Agent</b><br/>
       <sub>Reads <code>blast_radius_report</code><br/>departments from state.<br/>Picks: <b>data specialist</b>.<br/>Flags <code>CROSS-DEPARTMENT</code> if<br/>more than one is impacted.</sub>
     </td>
     <td align="center" width="33%" valign="top">
       <img src="https://img.icons8.com/fluency/72/expert.png" width="48" alt=""/><br/>
-      <b>🎯 Specialist [data]</b><br/>
+      <b>Specialist [data]</b><br/>
       <sub>A <b>second</b> vector search,<br/>targeted at data-specific knowledge.<br/>A <b>second</b> LLM call with a<br/>system prompt: <i>"you own Kafka,<br/>Postgres, Redis, ClickHouse"</i>.</sub>
     </td>
   </tr>
@@ -369,20 +369,20 @@ Now watch the full pipeline unfold in real time. 🎥
 <br/>
 
 <details open>
-  <summary><b>📊 Compare the three responses side by side</b></summary>
+  <summary><b>Compare the three responses side by side</b></summary>
   <br/>
 
 Run each mode for the same service in separate terminal tabs:
 
 ```bash
-make rag kafka-broker        # 🔵 tab 1
-make graph-rag kafka-broker  # 🟣 tab 2
-make tui kafka-broker        # 🌈 tab 3
+make rag kafka-broker        # tab 1
+make graph-rag kafka-broker  # tab 2
+make tui kafka-broker        # tab 3
 ```
 
 <div align="center">
 
-| Question | 🔵 Plain | 🟣 Graph | 🌈 Agentic |
+| Question | Plain | Graph | Agentic |
 |:--|:--:|:--:|:--:|
 | Which services are at risk? | Vague | Exact (5 named) | Exact + departments |
 | Who should be paged? | Generic | Generic | `data-oncall` specifically |
@@ -403,7 +403,7 @@ make tui kafka-broker        # 🌈 tab 3
 >
 > Retrieval *informs* the routing, which *determines* what gets retrieved next.
 >
-> 💜 **Retrieval is not a fixed step. It's a decision made by the agent based on what it has already learned.**
+> **Retrieval is not a fixed step. It's a decision made by the agent based on what it has already learned.**
 
 <br/>
 
@@ -415,14 +415,14 @@ make tui kafka-broker        # 🌈 tab 3
 <img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=F43F5E&height=56&section=header&text=4%EF%B8%8F%E2%83%A3%20Part%204%20%E2%80%94%20Exploration&fontColor=ffffff&fontSize=22&fontAlignY=36&desc=15%20min%20%E2%80%94%20break%20things%2C%20add%20services%2C%20trace%20code&descAlignY=68&descSize=13&descColor=e2e2e2&animation=fadeIn" alt="Part 4 — Exploration"/>
 
 <details open>
-  <summary><b>🎯 Try different failure points</b></summary>
+  <summary><b>Try different failure points</b></summary>
   <br/>
 
 ```bash
-make tui api-gateway          # 🏛  tier-1 platform — cascades to almost everything
-make tui k8s-controller       # 🛡  infra — cascades to all departments
-make tui experiment-tracker   # 🧪  tier-3 ml — small blast radius
-make tui postgres-primary     # 💾  data — big blast radius through product
+make tui api-gateway          # tier-1 platform — cascades to almost everything
+make tui k8s-controller       # infra — cascades to all departments
+make tui experiment-tracker   # tier-3 ml — small blast radius
+make tui postgres-primary     # data — big blast radius through product
 ```
 
 For each run, **predict before it completes**:
@@ -431,12 +431,12 @@ For each run, **predict before it completes**:
 - How many services are in the blast radius?
 - Which departments are affected?
 
-Then verify your prediction in the TUI. 🔮
+Then verify your prediction in the TUI.
 
 </details>
 
 <details>
-  <summary><b>🗺️ Read the code path for one incident</b></summary>
+  <summary><b>Read the code path for one incident</b></summary>
   <br/>
 
 Pick `kafka-broker` and trace what happens:
@@ -451,12 +451,12 @@ src/agents/specialists/data.py    →  calls search_services() again (dept-speci
 src/tui/display.py                →  renders everything you see in the terminal
 ```
 
-Every event shown in the TUI corresponds to **exactly one** of these calls. ✨
+Every event shown in the TUI corresponds to **exactly one** of these calls.
 
 </details>
 
 <details>
-  <summary><b>✏️ Modify something — Easy: add an incident template</b></summary>
+  <summary><b>Modify something — Easy: add an incident template</b></summary>
   <br/>
 
 Open `src/infrastructure/mock_apis.py` and add to `INCIDENT_TEMPLATES`:
@@ -474,7 +474,7 @@ Then run `make tui kafka-broker 8` *(index 8 = your new template)*.
 </details>
 
 <details>
-  <summary><b>🛠️ Modify something — Medium: add a service</b></summary>
+  <summary><b>Modify something — Medium: add a service</b></summary>
   <br/>
 
 **1.** Add to `src/infrastructure/topology.py`:
@@ -505,7 +505,7 @@ make seed
 make tui audit-log
 ```
 
-🎉 **Observe:** the blast radius of `kafka-broker` now includes `audit-log`. The
+**Observe:** the blast radius of `kafka-broker` now includes `audit-log`. The
 graph query discovers it automatically — *you didn't change any agent code*.
 
 </details>
@@ -527,31 +527,31 @@ graph query discovers it automatically — *you didn't change any agent code*.
     <th>Where it lives</th>
   </tr>
   <tr>
-    <td>🔵 Vector store (Qdrant)</td>
+    <td>Vector store (Qdrant)</td>
     <td><code>src/memory/graph.py</code> → <code>search_services()</code></td>
   </tr>
   <tr>
-    <td>🟣 Knowledge graph (Neo4j)</td>
+    <td>Knowledge graph (Neo4j)</td>
     <td><code>src/memory/graph.py</code> → <code>query_service_graph_context()</code></td>
   </tr>
   <tr>
-    <td>🕸️ Graph traversal (Cypher)</td>
+    <td>Graph traversal (Cypher)</td>
     <td><code>src/memory/blast_radius.py</code> → <code>_cypher_blast_radius()</code></td>
   </tr>
   <tr>
-    <td>📦 Agent state</td>
+    <td>Agent state</td>
     <td><code>src/agents/state.py</code> → <code>TriageState</code></td>
   </tr>
   <tr>
-    <td>🔀 Routing decision</td>
+    <td>Routing decision</td>
     <td><code>src/agents/router.py</code> → reads blast radius from state</td>
   </tr>
   <tr>
-    <td>🎯 Specialist dispatch</td>
+    <td>Specialist dispatch</td>
     <td><code>src/agents/specialist_coordinator.py</code></td>
   </tr>
   <tr>
-    <td>🎨 Live TUI events</td>
+    <td>Live TUI events</td>
     <td><code>src/tui/events.py</code> → <code>emit()</code> at every step</td>
   </tr>
 </table>
@@ -560,22 +560,22 @@ graph query discovers it automatically — *you didn't change any agent code*.
 
 <br/>
 
-### 💡 The one-line answer
+### The one-line answer
 
 <div align="center">
 
 <table>
   <tr>
     <td align="center" width="33%">
-      🔵 <b>Plain RAG</b><br/>
+      <b>Plain RAG</b><br/>
       <sub>retrieves <b>facts</b></sub>
     </td>
     <td align="center" width="33%">
-      🟣 <b>Graph RAG</b><br/>
+      <b>Graph RAG</b><br/>
       <sub>retrieves facts <b>+ relationships</b></sub>
     </td>
     <td align="center" width="33%">
-      🌈 <b>Agentic RAG</b><br/>
+      <b>Agentic RAG</b><br/>
       <sub>decides <b>what · from where · who acts</b></sub>
     </td>
   </tr>
@@ -595,7 +595,7 @@ graph query discovers it automatically — *you didn't change any agent code*.
 > *If you finish early or want to keep going after the workshop ends.*
 
 <details>
-  <summary><b>🔁 1. Reflect and re-retrieve</b></summary>
+  <summary><b>1. Reflect and re-retrieve</b></summary>
   <br/>
 
 After the specialist generates its analysis, add a **reflection step** that
@@ -605,18 +605,18 @@ if the analysis seems shallow.
 </details>
 
 <details>
-  <summary><b>🌐 2. Cross-department incident — fan out</b></summary>
+  <summary><b>2. Cross-department incident — fan out</b></summary>
   <br/>
 
 Trigger a `k8s-controller` failure. The router flags it as `CROSS-DEPARTMENT`.
 What if you wanted to call **all affected department specialists in parallel**?
 
-> 💡 **Hint:** [`langgraph.graph.Send`](https://langchain-ai.github.io/langgraph/concepts/low_level/#send)
+> **Hint:** [`langgraph.graph.Send`](https://langchain-ai.github.io/langgraph/concepts/low_level/#send)
 
 </details>
 
 <details>
-  <summary><b>🧠 3. Memory across incidents</b></summary>
+  <summary><b>3. Memory across incidents</b></summary>
   <br/>
 
 After each triage, write the specialist analysis back into Qdrant tagged with
@@ -626,7 +626,7 @@ retrieves it as **prior context**. Does the response improve?
 </details>
 
 <details>
-  <summary><b>🎲 4. Replace Cypher with LLM reasoning</b></summary>
+  <summary><b>4. Replace Cypher with LLM reasoning</b></summary>
   <br/>
 
 In `blast_radius.py`, comment out `_cypher_blast_radius()` and replace it with
@@ -645,9 +645,9 @@ Compare accuracy against the Cypher ground truth.
 
 <br/>
 
-### 🎉 You made it!
+### You made it!
 
-If this clicked for you, **drop a ⭐ on the repo** and share what you built.
+If this clicked for you, **drop a star on the repo** and share what you built.
 
 <br/>
 
@@ -658,6 +658,6 @@ If this clicked for you, **drop a ⭐ on the repo** and share what you built.
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=12,20,6&height=120&section=footer&animation=fadeIn" alt="footer banner" width="100%"/>
 
-<sub>Made with 💜 &nbsp;•&nbsp; Workshop v1.0.0 &nbsp;•&nbsp; <a href="#-the-scenario">Top ↑</a></sub>
+<sub>Made with &nbsp;•&nbsp; Workshop v1.0.0 &nbsp;•&nbsp; <a href="#-the-scenario">Top</a></sub>
 
 </div>
