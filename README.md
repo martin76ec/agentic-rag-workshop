@@ -33,12 +33,12 @@
 
 <!-- ─── one-line emoji TOC ──────────────────────────────────────────────── -->
 
-[✨&nbsp;Features](#-features) &nbsp;•&nbsp;
-[🛠️&nbsp;Stack](#%EF%B8%8F-tech-stack) &nbsp;•&nbsp;
-[📸&nbsp;Screenshots](#-screenshots) &nbsp;•&nbsp;
-[⚡&nbsp;Quick&nbsp;Start](#-quick-start) &nbsp;•&nbsp;
-[📖&nbsp;Usage](#-usage) &nbsp;•&nbsp;
-[💜&nbsp;Show&nbsp;Love](#-show-some-love)
+[✨&nbsp;Features](#features) &nbsp;•&nbsp;
+[🛠️&nbsp;Stack](#tech-stack) &nbsp;•&nbsp;
+[📸&nbsp;Screenshots](#screenshots) &nbsp;•&nbsp;
+[⚡&nbsp;Quick&nbsp;Start](#quick-start) &nbsp;•&nbsp;
+[📖&nbsp;Usage](#usage) &nbsp;•&nbsp;
+[💜&nbsp;Show&nbsp;Love](#show-some-love)
 
 </div>
 
