@@ -7,7 +7,9 @@ from src.agents.state import TriageState
 from src.infrastructure.models import Department, Severity
 from src.memory.blast_radius import generate_blast_radius_report
 from src.memory.config import OLLAMA_BASE_URL, OLLAMA_LLM_MODEL, get_memory
-from src.memory.graph import get_service_memory, search_services
+from src.memory.graph import get_service_memory, query_service_graph_context, search_services
+from src.tui.context import set_current_node
+from src.tui.events import Event, EventKind, emit
 
 TRIAGE_SYSTEM_PROMPT = """You are an infrastructure triage agent. Your job is to:
 1. Identify which service is affected by the incident
@@ -26,6 +28,9 @@ Respond in JSON format:
 
 
 def triage_node(state: TriageState) -> dict:
+    set_current_node("triage")
+    emit(Event(EventKind.NODE_START, "triage"))
+
     llm = ChatOllama(model=OLLAMA_LLM_MODEL, base_url=OLLAMA_BASE_URL, temperature=0.1)
     memory = get_memory()
 
@@ -51,6 +56,7 @@ experiment-tracker, k8s-controller, monitoring-agent, ci-runner, dns-resolver
 
 Respond in JSON with: service_name, severity_classification, department, reasoning, context_found"""
 
+    emit(Event(EventKind.LLM_START, "triage", {"label": "classifying incident"}))
     response = llm.invoke([SystemMessage(content=TRIAGE_SYSTEM_PROMPT), HumanMessage(content=prompt)])
 
     try:
@@ -64,6 +70,14 @@ Respond in JSON with: service_name, severity_classification, department, reasoni
             "context_found": "",
         }
 
+    emit(Event(EventKind.LLM_DONE, "triage", {
+        "preview": (
+            f"service={classification.get('service_name')} "
+            f"dept={classification.get('department')} "
+            f"sev={classification.get('severity_classification')}"
+        ),
+    }))
+
     service_name = classification.get("service_name", "unknown")
     if incident:
         service_name = incident.service_name
@@ -75,6 +89,19 @@ Respond in JSON with: service_name, severity_classification, department, reasoni
     else:
         search_results = search_services(memory, service_name, limit=3)
         context = "\n".join(r.get("memory", "") for r in search_results)
+
+    # Enrich context with graph neighborhood from Neo4j
+    graph_ctx: dict = {}
+    if service_name != "unknown":
+        graph_ctx = query_service_graph_context(service_name)
+        if graph_ctx:
+            parts = []
+            if graph_ctx.get("depends_on"):
+                parts.append(f"Depends on: {', '.join(graph_ctx['depends_on'])}")
+            if graph_ctx.get("depended_by"):
+                parts.append(f"Depended on by: {', '.join(graph_ctx['depended_by'][:6])}")
+            if parts:
+                context = (context + "\n" + "  ".join(parts)).strip()
 
     classification["context_found"] = context or classification.get("context_found", "")
 
@@ -103,7 +130,7 @@ Respond in JSON with: service_name, severity_classification, department, reasoni
         incident_id = incident.incident_id if incident else "MANUAL"
         blast_report = generate_blast_radius_report(service_name, incident_id, memory)
 
-    return {
+    result = {
         "messages": [AIMessage(content=triage_classification)],
         "incident": incident,
         "service_name": service_name,
@@ -111,3 +138,5 @@ Respond in JSON with: service_name, severity_classification, department, reasoni
         "triage_classification": triage_classification,
         "blast_radius_report": blast_report,
     }
+    emit(Event(EventKind.NODE_DONE, "triage"))
+    return result

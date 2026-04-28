@@ -4,6 +4,7 @@ from langchain_ollama import ChatOllama
 from src.agents.state import TriageState
 from src.memory.config import OLLAMA_BASE_URL, OLLAMA_LLM_MODEL, get_memory
 from src.memory.graph import search_services
+from src.tui.events import Event, EventKind, emit
 
 INFRA_SYSTEM_PROMPT = (
     "You are an Infra department specialist agent. You own: "
@@ -45,7 +46,9 @@ Memory context: {memory_context}
 
 Provide root cause, mitigation, remediation, and impact assessment. Remember infra failures can cascade widely."""
 
+    emit(Event(EventKind.LLM_START, "specialist", {"label": "infra analysis"}))
     response = llm.invoke([SystemMessage(content=INFRA_SYSTEM_PROMPT), HumanMessage(content=prompt)])
+    emit(Event(EventKind.LLM_DONE, "specialist", {"preview": response.content[:150]}))
 
     return {
         "department_knowledge": memory_context,

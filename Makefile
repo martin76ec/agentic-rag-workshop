@@ -33,6 +33,16 @@ inspect-mem: ## Show all documents stored in Mem0/Qdrant
 incident: ## Run incident triage (optionally pass SERVICE=name)
 	uv run python scripts/run_incident.py $(filter-out $@,$(MAKECMDGOALS))
 
+# ── Workshop progression ────────────────────────────────────────────────────
+rag: ## [Workshop 1] Plain RAG — vector search + single LLM call (SERVICE=name)
+	uv run python scripts/run_plain_rag.py $(filter-out $@,$(MAKECMDGOALS))
+
+graph-rag: ## [Workshop 2] Graph RAG — vector + Neo4j + single LLM call (SERVICE=name)
+	uv run python scripts/run_graph_rag.py $(filter-out $@,$(MAKECMDGOALS))
+
+tui: ## [Workshop 3] Agentic RAG — full multi-agent pipeline with live TUI (SERVICE=name)
+	uv run python scripts/run_triage_tui.py $(filter-out $@,$(MAKECMDGOALS))
+
 test: ## Run all tests
 	uv run pytest tests/ -v
 

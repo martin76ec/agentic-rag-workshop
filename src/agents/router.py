@@ -1,5 +1,6 @@
 from src.agents.state import TriageState
 from src.infrastructure.models import Department
+from src.tui.events import Event, EventKind, emit
 
 ROUTING_PROMPT_TEMPLATE = """Route this incident to the appropriate department specialist.
 
@@ -14,6 +15,7 @@ Respond with just the department name."""
 
 
 def router_node(state: TriageState) -> dict:
+    emit(Event(EventKind.NODE_START, "router"))
     department = state.get("department")
     if department:
         routing_decision = f"Routing to {department.value} specialist"
@@ -39,6 +41,7 @@ def router_node(state: TriageState) -> dict:
     if cross_dept:
         routing_decision += f" — CROSS-DEPARTMENT: {', '.join(departments_involved)}"
 
+    emit(Event(EventKind.ROUTING, "router", {"decision": routing_decision}))
     return {
         "department": department,
         "routing_decision": routing_decision,

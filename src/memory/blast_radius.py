@@ -1,94 +1,61 @@
-from collections import deque
-
 from mem0 import Memory
 
 from src.infrastructure.models import BlastRadiusReport, Department, Severity
 from src.infrastructure.topology import get_service_by_name
+from src.tui.context import get_current_node
+from src.tui.events import Event, EventKind, emit
+
+_BLAST_CYPHER = """\
+MATCH path = (aff:Service)-[:DEPENDS_ON*1..{hops}]->(root:Service {{name: $service}})
+RETURN aff.name AS name, aff.department AS dept,
+       [n IN nodes(path) | n.name] AS path_nodes"""
 
 
-def compute_blast_radius(
+def _cypher_blast_radius(
     service_name: str,
     max_hops: int = 4,
 ) -> tuple[list[str], list[list[str]], list[Department]]:
-    all_affected = set()
-    propagation_paths: list[list[str]] = []
-    affected_departments: set[Department] = set()
+    """Traverse the Neo4j graph to find all services that break when service_name fails."""
+    from src.memory.config import get_neo4j_driver
 
-    service = get_service_by_name(service_name)
-    if not service:
-        return [], [], []
+    affected: list[str] = []
+    seen: set[str] = set()
+    paths: list[list[str]] = []
+    seen_paths: set[tuple] = set()
+    depts: set[Department] = set()
 
-    affected_departments.add(service.department)
+    driver = get_neo4j_driver()
+    try:
+        with driver.session() as session:
+            cypher = _BLAST_CYPHER.format(hops=max_hops)
+            for rec in session.run(cypher, service=service_name):
+                name = rec["name"]
+                if name not in seen:
+                    seen.add(name)
+                    affected.append(name)
+                try:
+                    depts.add(Department(rec["dept"]))
+                except ValueError:
+                    pass
+                # Reverse so path reads root → affected (causation direction)
+                path_nodes = tuple(reversed(rec["path_nodes"]))
+                if path_nodes not in seen_paths:
+                    seen_paths.add(path_nodes)
+                    paths.append(list(path_nodes))
 
-    queue: deque[tuple[str, int, list[str]]] = deque()
-    queue.append((service_name, 0, [service_name]))
+            root_rec = session.run(
+                "MATCH (s:Service {name: $service}) RETURN s.department AS dept",
+                service=service_name,
+            ).single()
+            if root_rec:
+                try:
+                    depts.add(Department(root_rec["dept"]))
+                except ValueError:
+                    pass
+    finally:
+        driver.close()
 
-    while queue:
-        current, hops, path = queue.popleft()
-        if hops >= max_hops:
-            continue
-
-        current_service = get_service_by_name(current)
-        if not current_service:
-            continue
-
-        for dependent_name in current_service.depends_on:
-            if dependent_name in all_affected:
-                new_path = path + [dependent_name]
-                propagation_paths.append(new_path)
-                continue
-
-            all_affected.add(dependent_name)
-            dependent_service = get_service_by_name(dependent_name)
-            if dependent_service:
-                affected_departments.add(dependent_service.department)
-
-            new_path = path + [dependent_name]
-            propagation_paths.append(new_path)
-            queue.append((dependent_name, hops + 1, new_path))
-
-    return list(all_affected), propagation_paths, list(affected_departments)
-
-
-def compute_upstream_blast_radius(
-    service_name: str,
-    max_hops: int = 4,
-) -> tuple[list[str], list[list[str]], list[Department]]:
-    all_affected = set()
-    propagation_paths: list[list[str]] = []
-    affected_departments: set[Department] = set()
-
-    service = get_service_by_name(service_name)
-    if not service:
-        return [], [], []
-
-    affected_departments.add(service.department)
-
-    queue: deque[tuple[str, int, list[str]]] = deque()
-    queue.append((service_name, 0, [service_name]))
-
-    while queue:
-        current, hops, path = queue.popleft()
-        if hops >= max_hops:
-            continue
-
-        from src.infrastructure.topology import get_dependents
-
-        dependents = get_dependents(current)
-        for dep in dependents:
-            if dep.name in all_affected:
-                new_path = path + [dep.name]
-                propagation_paths.append(new_path)
-                continue
-
-            all_affected.add(dep.name)
-            affected_departments.add(dep.department)
-
-            new_path = path + [dep.name]
-            propagation_paths.append(new_path)
-            queue.append((dep.name, hops + 1, new_path))
-
-    return list(all_affected), propagation_paths, list(affected_departments)
+    return affected, paths, list(depts)
 
 
 def estimate_severity(affected_services: list[str], propagation_paths: list[list[str]]) -> Severity:
@@ -120,16 +87,15 @@ def generate_blast_radius_report(
     memory: Memory | None = None,
     max_hops: int = 4,
 ) -> BlastRadiusReport:
-    downstream_affected, downstream_paths, downstream_depts = compute_blast_radius(
-        incident_service, max_hops
-    )
-    upstream_affected, upstream_paths, upstream_depts = compute_upstream_blast_radius(
-        incident_service, max_hops
-    )
+    node = get_current_node()
+    cypher = _BLAST_CYPHER.format(hops=max_hops)
+    emit(Event(EventKind.GRAPH_BFS_START, node, {
+        "service": incident_service,
+        "label": f"blast radius from {incident_service}",
+        "cypher": cypher,
+    }))
 
-    all_affected = list(set(downstream_affected + upstream_affected))
-    all_paths = downstream_paths + upstream_paths
-    all_departments = list(set(downstream_depts + upstream_depts))
+    all_affected, all_paths, all_departments = _cypher_blast_radius(incident_service, max_hops)
 
     all_affected_severity = [incident_service] + all_affected
     estimated_impact = estimate_severity(all_affected_severity, all_paths)
@@ -149,7 +115,7 @@ def generate_blast_radius_report(
             if len(path) > 2:
                 recommended.append(f"Cascading path detected: {' → '.join(path)}")
 
-    return BlastRadiusReport(
+    report = BlastRadiusReport(
         incident_id=incident_id,
         root_service=incident_service,
         affected_services=all_affected,
@@ -158,3 +124,12 @@ def generate_blast_radius_report(
         estimated_impact=estimated_impact,
         recommended_actions=recommended,
     )
+    emit(Event(EventKind.GRAPH_BFS_DONE, node, {
+        "label": "blast_radius",
+        "service": incident_service,
+        "affected_services": all_affected,
+        "departments": [d.value for d in all_departments],
+        "impact": estimated_impact.value,
+        "paths": [p for p in all_paths[:5] if len(p) >= 2],
+    }))
+    return report

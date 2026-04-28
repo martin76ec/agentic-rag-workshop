@@ -4,6 +4,8 @@ from neo4j import Driver
 from src.infrastructure.models import Department, Service
 from src.infrastructure.topology import SERVICES, get_dependents
 from src.memory.config import get_memory, get_neo4j_driver
+from src.tui.context import get_current_node
+from src.tui.events import Event, EventKind, emit
 
 
 def service_to_memory_content(service: Service) -> str:
@@ -163,23 +165,83 @@ def seed_neo4j_graph(driver: Driver | None = None) -> dict[str, int]:
     return {"nodes": node_count, "relationships": rel_count}
 
 
+_NEIGHBORHOOD_CYPHER = """\
+MATCH (s:Service {name: $service})
+OPTIONAL MATCH (s)-[:DEPENDS_ON]->(dep:Service)
+OPTIONAL MATCH (aff:Service)-[:DEPENDS_ON]->(s)
+RETURN s.tier AS tier, s.department AS dept,
+       collect(DISTINCT dep.name) AS depends_on,
+       collect(DISTINCT aff.name) AS depended_by"""
+
+
+def query_service_graph_context(service_name: str) -> dict:
+    """Query Neo4j for the service's immediate graph neighborhood."""
+    node = get_current_node()
+    emit(Event(EventKind.GRAPH_BFS_START, node, {
+        "service": service_name,
+        "label": f"neighborhood of {service_name}",
+        "cypher": _NEIGHBORHOOD_CYPHER,
+    }))
+
+    driver = get_neo4j_driver()
+    try:
+        with driver.session() as session:
+            rec = session.run(_NEIGHBORHOOD_CYPHER, service=service_name).single()
+    finally:
+        driver.close()
+
+    if not rec:
+        emit(Event(EventKind.GRAPH_BFS_DONE, node, {
+            "service": service_name,
+            "affected_services": [],
+            "departments": [],
+            "impact": "unknown",
+            "paths": [],
+        }))
+        return {}
+
+    depends_on: list[str] = rec["depends_on"] or []
+    depended_by: list[str] = rec["depended_by"] or []
+
+    emit(Event(EventKind.GRAPH_BFS_DONE, node, {
+        "label": "neighborhood",
+        "service": service_name,
+        "depends_on": depends_on,
+        "depended_by": depended_by,
+        "departments": [rec["dept"]] if rec["dept"] else [],
+        "impact": f"tier {rec['tier']}",
+    }))
+
+    return {
+        "tier": rec["tier"],
+        "department": rec["dept"],
+        "depends_on": depends_on,
+        "depended_by": depended_by,
+    }
+
+
 def search_services(memory: Memory, query: str, limit: int = 5) -> list[dict]:
+    node = get_current_node()
+    emit(Event(EventKind.VECTOR_SEARCH_START, node, {"query": query}))
     results = memory.search(
         query,
         filters={"user_id": "infrastructure"},
         top_k=limit,
     )
-    return [r for r in results.get("results", []) if r.get("metadata", {}).get("type") == "service"]
+    hits = [r for r in results.get("results", []) if r.get("metadata", {}).get("type") == "service"]
+    emit(Event(EventKind.VECTOR_SEARCH_DONE, node, {"results": hits}))
+    return hits
 
 
 def get_service_memory(memory: Memory, service_name: str) -> dict | None:
+    node = get_current_node()
+    emit(Event(EventKind.VECTOR_SEARCH_START, node, {"query": service_name}))
     results = memory.search(
         f"Service: {service_name}",
         filters={"user_id": "infrastructure"},
         top_k=1,
     )
     hits = results.get("results", [])
-    for hit in hits:
-        if hit.get("metadata", {}).get("service_name") == service_name:
-            return hit
-    return None
+    hit = next((h for h in hits if h.get("metadata", {}).get("service_name") == service_name), None)
+    emit(Event(EventKind.VECTOR_SEARCH_DONE, node, {"results": [hit] if hit else []}))
+    return hit

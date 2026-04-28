@@ -1,214 +1,201 @@
+<div align="center">
+
 # Agentic RAG Workshop
 
-Build an infrastructure triage agent that uses **RAG (Retrieval-Augmented Generation)** with an **agentic workflow** to classify incidents, compute blast radius, and route to department specialists — all running locally with Ollama.
+**Build intuition for retrieval-augmented generation by running the same
+infrastructure incident through three progressively more powerful modes.**
 
-## What You'll Learn
+[![Python](https://img.shields.io/badge/python-3.11+-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
+[![LangGraph](https://img.shields.io/badge/LangGraph-stateful_agents-FF6B35?style=flat-square)](https://langchain-ai.github.io/langgraph/)
+[![Ollama](https://img.shields.io/badge/Ollama-local_LLM-000000?style=flat-square&logo=ollama&logoColor=white)](https://ollama.com)
+[![Qdrant](https://img.shields.io/badge/Qdrant-vector_store-DC244C?style=flat-square)](https://qdrant.tech)
+[![Neo4j](https://img.shields.io/badge/Neo4j-graph_db-008CC1?style=flat-square&logo=neo4j&logoColor=white)](https://neo4j.com)
 
-- **Agentic RAG**: How agents use retrieved context to make decisions, not just answer questions
-- **Memory as Knowledge Graph**: Using Mem0 to store and query infrastructure topology as vector memory
-- **LangGraph Workflows**: Building stateful multi-step agent pipelines with conditional routing
-- **Blast Radius Computation**: Graph traversal to predict cascading failures across services
-- **Local-First Stack**: Everything runs on your machine — no API keys required
+<br/>
+
+<img src="assets/demo.svg" width="720" alt="Live TUI demo — kafka-broker incident running through the agentic pipeline"/>
+
+</div>
+
+---
+
+## The Idea
+
+Three modes. Same incident (`kafka-broker` failure). Watch how the system's
+understanding of *what* to retrieve — and *who* should handle it — evolves.
+
+| | Plain RAG | Graph RAG | Agentic RAG |
+|:--|:--:|:--:|:--:|
+| **How retrieval works** | Fixed vector search | Fixed vector + 2 Cypher queries | Agent decides what to retrieve |
+| **Knows blast radius?** | No — vague estimates | Yes — exact named services | Yes + departments + escalation paths |
+| **Who gets paged?** | Generic advice | Generic advice | `data-oncall` specifically |
+| **Specialist knowledge?** | No | No | Yes — Kafka-specific runbooks |
+| **LLM calls** | 1 | 1 | 2 (triage + specialist) |
+| **Retrieval steps** | 1 | 3 | 4–5 |
+
+> **Retrieval is not a fixed step. It's a decision made by the agent
+> based on what it has already learned.**
+
+---
+
+## Workshop Guide
+
+The full guided workshop is in [`WORKSHOP.md`](WORKSHOP.md) (~90 min, 4 parts).
+
+**The progression:**
+
+```
+make rag kafka-broker        # Part 1: plain RAG — one search, one LLM
+make graph-rag kafka-broker  # Part 2: add Neo4j topology queries
+make tui kafka-broker        # Part 3: full agentic pipeline with live TUI
+```
+
+Run all three in separate tabs, compare outputs side by side. Each mode runs
+the same incident so the differences are unambiguous.
+
+---
+
+## Quick Start
+
+**Prerequisites:** [uv](https://docs.astral.sh/uv/), [Docker](https://www.docker.com/), [Ollama](https://ollama.com)
+
+```bash
+# 1. Pull models (one-time)
+ollama pull gemma4:31b-cloud
+ollama pull nomic-embed-text-v2-moe
+
+# 2. Start stores, create .env, install deps
+make setup
+
+# 3. Seed 20 services into Qdrant (vector) + Neo4j (graph)
+make seed
+
+# 4. Run the full agentic pipeline
+make tui kafka-broker
+```
+
+Verify both stores have data before running:
+
+```bash
+make inspect-mem    # lists all documents in Qdrant
+make browse-graph   # opens Neo4j browser — run: MATCH (n) RETURN n
+```
+
+---
 
 ## Architecture
 
 ```
-Incident → [Triage Agent] → [Router] → [Department Specialist]
-               ↑                          ↑
-          Mem0 Memory                 Mem0 Memory
-         (topology +                  (department
-          blast radius)                knowledge)
+Incident
+   │
+   ├─ Plain RAG ──────────────── [Vector Search] ──────────────── [LLM] ── Response
+   │
+   ├─ Graph RAG ────── [Vector Search] ── [Neo4j: neighborhood] ──────────────────
+   │                                      [Neo4j: blast radius] ── [LLM] ── Response
+   │
+   └─ Agentic RAG ── ┌─ Triage Agent ──────────────────────────┐
+                     │  vector search + graph neighborhood      │
+                     │  + blast radius + LLM classification     │
+                     └─────────────────────┬───────────────────┘
+                                           │ state: service, severity,
+                                           │ blast_radius_report
+                                           ▼
+                              ┌─ Router Agent ─────────────────┐
+                              │  reads affected_departments     │
+                              │  routes to specialist           │
+                              └────────────┬───────────────────┘
+                                           │
+                                           ▼
+                              ┌─ Specialist [data] ────────────┐
+                              │  targeted vector search         │
+                              │  Kafka-expert system prompt     │
+                              │  root cause + runbooks          │
+                              └────────────────────────────────┘
 ```
 
-**Pipeline flow:**
+**The "agentic" moment:** the router's decision reads `blast_radius_report.affected_departments`
+from state — data retrieved by the triage agent from Neo4j. Retrieval *informs* routing,
+which *determines* what gets retrieved next.
 
-1. **Triage** — LLM classifies the incident (service, severity, department) and enriches with Mem0 context
-2. **Blast Radius** — BFS traversal of dependency graph to find affected services and departments
-3. **Router** — Routes to the right department specialist, flags cross-department incidents
-4. **Specialist** — Department expert provides root cause analysis, mitigation, and remediation
+---
 
 ## Infrastructure Topology
 
-20 services across 5 departments with real dependency chains:
+20 services across 5 departments, seeded into both Qdrant and Neo4j from the
+same source (`src/infrastructure/topology.py`):
 
 ```
-api-gateway ──→ auth-service, config-service, service-mesh
-service-mesh ──→ postgres-primary, redis-cache, kafka-broker, k8s-controller
-kafka-broker ──→ order-service, payment-service, notification-service, training-pipeline
-postgres-primary ──→ order-service, inventory-service, payment-service, feature-store, experiment-tracker
-redis-cache ──→ inventory-service, feature-store
-k8s-controller ──→ monitoring-agent, ci-runner, dns-resolver
+platform:  api-gateway ─→ auth-service, config-service, service-mesh
+data:      service-mesh ─→ postgres-primary, redis-cache, kafka-broker
+product:   kafka-broker ─→ order-service, payment-service, notification-service
+ml:        postgres-primary ─→ feature-store ─→ model-serving, experiment-tracker
+infra:     k8s-controller ─→ monitoring-agent, ci-runner, dns-resolver
 ```
 
-## Prerequisites
+Adding a service to `topology.py` and re-seeding (`make seed`) automatically
+updates both stores — no agent code changes required.
 
-- [uv](https://docs.astral.sh/uv/) — Python package manager
-- [Docker](https://www.docker.com/) — for Qdrant vector store
-- [Ollama](https://ollama.com/) — local LLM runtime
+---
 
-Install Ollama and pull the required models:
-
-```bash
-ollama pull gemma4:31b-cloud
-ollama pull nomic-embed-text-v2-moe
-```
-
-## Quick Start
-
-```bash
-make setup     # Create venv, install deps, start Qdrant, create .env
-make seed      # Load infrastructure topology into Mem0
-make incident  # Run a random incident through the pipeline
-```
-
-Or specify a service:
-
-```bash
-make incident kafka-broker
-```
-
-## Manual Setup
-
-If you prefer step-by-step:
-
-```bash
-# 1. Create environment
-uv venv && uv sync
-
-# 2. Start Qdrant
-docker compose up -d qdrant
-
-# 3. Configure (defaults work if Ollama is on localhost:11434)
-cp .env.example .env
-
-# 4. Seed infrastructure into Mem0
-uv run python scripts/seed_infrastructure.py
-
-# 5. Run an incident
-uv run python scripts/run_incident.py
-uv run python scripts/run_incident.py kafka-broker
-```
-
-## Configuration
-
-All configuration is via environment variables (`.env` file):
-
-| Variable | Default | Description |
-|---|---|---|
-| `OLLAMA_BASE_URL` | `http://localhost:11434` | Ollama API endpoint |
-| `OLLAMA_LLM_MODEL` | `gemma4:31b-cloud` | LLM model for agent reasoning |
-| `OLLAMA_EMBEDDING_MODEL` | `nomic-embed-text-v2-moe:latest` | Embedding model for Mem0 |
-| `QDRANT_HOST` | `localhost` | Qdrant host |
-| `QDRANT_PORT` | `6333` | Qdrant port |
-| `AGENTOPS_API_KEY` | _(empty)_ | Optional — AgentOps observability |
-| `AGENTOPS_API_HOST` | `http://localhost:8000` | Optional — self-hosted AgentOps |
-
-## Project Structure
+## Code Map
 
 ```
 src/
-├── infrastructure/          # Domain models and mock data
-│   ├── models.py            #   Service, Incident, BlastRadiusReport, etc.
-│   ├── topology.py          #   20 services, 5 departments, dependency graph
-│   └── mock_apis.py         #   Health checks, incident generation, metrics
-├── memory/                  # Mem0 RAG layer
-│   ├── config.py            #   Mem0 OSS config (Ollama LLM + embeddings, Qdrant)
-│   ├── graph.py             #   Seed/search infrastructure in Mem0
-│   └── blast_radius.py     #   BFS blast radius computation
-├── agents/                  # LangGraph agent pipeline
-│   ├── state.py             #   TriageState TypedDict
-│   ├── triage.py            #   Triage node — LLM classification + Mem0 enrichment
-│   ├── router.py            #   Router node — department routing + cross-dept flags
-│   ├── graph.py             #   StateGraph: triage → router → specialist → END
-│   └── specialists/         #   5 department specialist agents
-│       ├── platform.py      #     API gateway, auth, config, mesh
-│       ├── data.py          #     PostgreSQL, Redis, Kafka, ClickHouse
-│       ├── product.py       #     Orders, inventory, payments, notifications
-│       ├── ml.py            #     Feature store, model serving, training, experiments
-│       └── infra.py         #     Kubernetes, monitoring, CI/CD, DNS
-└── observability/           # AgentOps integration
-    └── decorators.py        #   @agent, @operation, @tool, @trace
+├── infrastructure/
+│   ├── topology.py          # 20 services, 5 departments — ground truth
+│   ├── models.py            # Service, Incident, BlastRadiusReport, Severity
+│   └── mock_apis.py         # incident templates
+├── memory/
+│   ├── config.py            # Mem0 + Neo4j driver setup
+│   ├── graph.py             # seed/search Qdrant; neighborhood Cypher query
+│   └── blast_radius.py      # DEPENDS_ON*1..4 traversal, severity estimation
+├── agents/
+│   ├── state.py             # TriageState (shared across all nodes)
+│   ├── triage.py            # vector search + graph queries + LLM classify
+│   ├── router.py            # reads blast_radius_report, picks specialist
+│   ├── graph.py             # LangGraph: triage → router → specialist → END
+│   └── specialists/         # platform, data, product, ml, infra
+└── tui/
+    ├── events.py            # emit() / register_handler() event bus
+    ├── context.py           # thread-local current_node tracking
+    └── display.py           # TriageTUI Rich live display
 
 scripts/
-├── seed_infrastructure.py   # Load topology into Mem0 (Rich output)
-├── run_incident.py           # Run incident through pipeline (Rich output)
-└── setup_dev.sh             # Dev environment bootstrap
-
-tests/                       # 58 tests (pytest)
+├── run_plain_rag.py         # make rag
+├── run_graph_rag.py         # make graph-rag
+└── run_triage_tui.py        # make tui
 ```
 
-## How It Works
+Every event shown in the TUI corresponds to exactly one `emit()` call in the
+memory or agent layer — traceable line by line.
 
-### 1. Infrastructure as Memory
+---
 
-The 20-service topology is seeded into Mem0 as vector memory with structured metadata:
+## Configuration
 
-```python
-memory.add(
-    "Service: kafka-broker. Department: data. Tier: 1. Depends on: service-mesh...",
-    user_id="infrastructure",
-    metadata={"type": "service", "service_name": "kafka-broker", "department": "data", "tier": "1"},
-    infer=False,
-)
-```
+`.env` file (created by `make setup` from `.env.example`):
 
-Agents query this memory to retrieve context about affected services during triage.
+| Variable | Default | Description |
+|:--|:--|:--|
+| `OLLAMA_BASE_URL` | `http://localhost:11434` | Ollama endpoint |
+| `OLLAMA_LLM_MODEL` | `gemma4:31b-cloud` | Reasoning model |
+| `OLLAMA_EMBEDDING_MODEL` | `nomic-embed-text-v2-moe:latest` | Embedding model |
+| `QDRANT_HOST` | `localhost` | Qdrant host |
+| `QDRANT_PORT` | `6333` | Qdrant port |
+| `NEO4J_URL` | `bolt://localhost:7687` | Neo4j bolt endpoint |
+| `NEO4J_USERNAME` | `neo4j` | Neo4j username |
+| `NEO4J_PASSWORD` | `password` | Neo4j password |
 
-### 2. Triage with RAG
-
-The triage agent:
-1. Sends the incident to the LLM for classification (service, severity, department)
-2. Queries Mem0 for context about the classified service
-3. Computes blast radius via BFS on the dependency graph
-4. Returns enriched classification with memory context
-
-### 3. Blast Radius
-
-Graph traversal finds both **upstream** (services that depend on the affected one) and **downstream** (services the affected one depends on) impact:
-
-```python
-compute_blast_radius("kafka-broker", max_hops=4)
-# → affected: [service-mesh], departments: [data, product, ml], severity: HIGH
-```
-
-### 4. Specialist Agents
-
-Each department specialist has domain expertise (system prompts) and queries Mem0 for department-specific knowledge before providing analysis.
-
-## Workshop Challenges
-
-After running the basic pipeline, try these extensions:
-
-### Easy
-- **Add a new department**: Create a `security` department with services like `waf-proxy` and `vault`, wire it into the topology, router, and specialist coordinator
-- **Custom incident templates**: Add new incident templates to `mock_apis.py` for your department's services
-
-### Medium
-- **Auto-remediation**: Add a remediation node after the specialist that suggests and simulates corrective actions (e.g., restart pod, scale replicas, failover)
-- **Learning loop**: After each incident, store the specialist's analysis back into Mem0 so future triages can reference past resolutions
-
-### Hard
-- **Multi-agent correlation**: When multiple incidents arrive simultaneously, build a correlation agent that detects related incidents (e.g., kafka-broker latency + order-service errors) and creates a unified response
-- **Replace deterministic blast radius with LLM reasoning**: Instead of BFS traversal, let the LLM reason about cascading failures from Mem0 context alone — compare accuracy
-- **Human-in-the-loop**: Add a LangGraph interrupt node that pauses the pipeline and asks the operator for confirmation before executing remediation
+---
 
 ## Development
 
 ```bash
-make test      # Run 58 tests
-make lint      # Ruff check
-make check     # Lint + test
-make clean     # Remove venv, caches, Qdrant data
-make status    # Check if Qdrant is running
+make test      # pytest
+make lint      # ruff
+make check     # lint + test
+make stop      # stop Docker services
+make clean     # remove venv + volumes
 ```
 
-## Tech Stack
-
-| Component | Technology | Why |
-|---|---|---|
-| LLM | Ollama (Gemma 4) | Local, no API keys, self-hosted |
-| Embeddings | Ollama (nomic-embed-text-v2) | Local, same server |
-| Vector Store | Qdrant | OSS, fast, Docker-friendly |
-| Memory | Mem0 OSS | Structured memory with metadata filters |
-| Agent Framework | LangGraph | Stateful graph-based workflows |
-| Observability | AgentOps | Optional tracing dashboard |
+See [`WORKSHOP.md`](WORKSHOP.md) for guided exercises and extension challenges.
