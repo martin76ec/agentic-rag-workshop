@@ -42,15 +42,16 @@
 <!--                           ✦   EL ESCENARIO   ✦                          -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-<h2 id="-el-escenario">🎬 El Escenario</h2>
+<div id="-el-escenario" align="center">
 
-<div align="center">
-
-<table width="100%"><tr>
-<td width="72" align="center" valign="middle"><img src="https://img.icons8.com/fluency/96/pagerduty.png" width="56" alt="alert"/></td>
-<td valign="middle"><b style="font-size:18px">El Escenario</b><br/>
-<sub>PagerDuty te despertó a las 3am.</sub></td>
-</tr></table>
+<table width="100%" cellspacing="0" cellpadding="8" style="background:linear-gradient(90deg,#1a1a2e,#0f0f1e);border:1px solid #F43F5E;border-radius:8px">
+<tr>
+<td width="8" style="background:#F43F5E;border-radius:8px 0 0 8px"></td>
+<td width="64" align="center" valign="middle"><img src="https://img.icons8.com/fluency/96/pagerduty.png" width="48" alt="alert"/></td>
+<td align="left" valign="middle"><b style="font-size:20px;color:#F43F5E">🎬 El Escenario</b><br/>
+<sub style="color:#a0a0b0">PagerDuty te despertó a las 3am.</sub></td>
+</tr>
+</table>
 
 </div>
 
@@ -89,15 +90,16 @@ dónde termina la *"recuperación"* y dónde comienza lo *"agéntico"*.
 <!--                          ✦   LOS TRES MODOS   ✦                         -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-<h2 id="%EF%B8%8F-los-tres-modos">🗺️ Los Tres Modos</h2>
+<div id="%EF%B8%8F-los-tres-modos" align="center">
 
-<div align="center">
-
-<table width="100%"><tr>
-<td width="72" align="center" valign="middle"><img src="https://img.icons8.com/fluency/96/flow-chart.png" width="56" alt="modos"/></td>
-<td valign="middle"><b style="font-size:18px">Los Tres Modos</b><br/>
-<sub>Mismo incidente. Tres arquitecturas de retrieval. Mirá cómo evoluciona ↓</sub></td>
-</tr></table>
+<table width="100%" cellspacing="0" cellpadding="8" style="background:linear-gradient(90deg,#1a1a2e,#0f0f1e);border:1px solid #8B5CF6;border-radius:8px">
+<tr>
+<td width="8" style="background:#8B5CF6;border-radius:8px 0 0 8px"></td>
+<td width="64" align="center" valign="middle"><img src="https://img.icons8.com/fluency/96/flow-chart.png" width="48" alt="modos"/></td>
+<td align="left" valign="middle"><b style="font-size:20px;color:#8B5CF6">🗺️ Los Tres Modos</b><br/>
+<sub style="color:#a0a0b0">Mismo incidente. Tres arquitecturas de retrieval. Mirá cómo evoluciona ↓</sub></td>
+</tr>
+</table>
 
 </div>
 
@@ -181,15 +183,16 @@ flowchart LR
 <!--                            ✦   PARTE 0: SETUP   ✦                       -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-<h2 id="0%EF%B8%8F%E2%83%A3-parte-0--configuraci%C3%B3n-5-min">0️⃣ Parte 0 — Configuración</h2>
+<div id="0%EF%B8%8F%E2%83%A3-parte-0--configuraci%C3%B3n-5-min" align="center">
 
-<div align="center">
-
-<table width="100%"><tr>
-<td width="72" align="center" valign="middle" bgcolor="#0f0f1e"><img src="https://img.icons8.com/fluency/96/settings.png" width="56" alt="setup"/></td>
-<td valign="middle"><b style="font-size:18px">Parte 0 — Configuración</b><br/>
-<sub>5 min — Levantá Qdrant + Neo4j, cargá datos</sub></td>
-</tr></table>
+<table width="100%" cellspacing="0" cellpadding="8" style="background:linear-gradient(90deg,#1a1a2e,#0f0f1e);border:1px solid #8B5CF6;border-radius:8px">
+<tr>
+<td width="8" style="background:#8B5CF6;border-radius:8px 0 0 8px"></td>
+<td width="64" align="center" valign="middle"><img src="https://img.icons8.com/fluency/96/settings.png" width="48" alt="setup"/></td>
+<td align="left" valign="middle"><b style="font-size:20px;color:#8B5CF6">0️⃣ Parte 0 — Configuración</b><br/>
+<sub style="color:#a0a0b0">5 min — Levantá Qdrant + Neo4j, cargá datos</sub></td>
+</tr>
+</table>
 
 </div>
 
@@ -219,15 +222,16 @@ make browse-graph   # 🌐 abre el navegador de Neo4j en http://localhost:7474
 <!--                          ✦   PARTE 1: PLAIN RAG   ✦                     -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-<h2 id="1%EF%B8%8F%E2%83%A3-parte-1--plain-rag-20-min">1️⃣ Parte 1 — Plain RAG</h2>
+<div id="1%EF%B8%8F%E2%83%A3-parte-1--plain-rag-20-min" align="center">
 
-<div align="center">
-
-<table width="100%"><tr>
-<td width="72" align="center" valign="middle" bgcolor="#0f0f1e"><img src="https://img.icons8.com/fluency/96/search.png" width="56" alt="search"/></td>
-<td valign="middle"><b style="font-size:18px;color:#06B6D4">Parte 1 — Plain RAG</b><br/>
-<sub>20 min — Una búsqueda vectorial, una llamada al LLM</sub></td>
-</tr></table>
+<table width="100%" cellspacing="0" cellpadding="8" style="background:linear-gradient(90deg,#1a1a2e,#0f0f1e);border:1px solid #06B6D4;border-radius:8px">
+<tr>
+<td width="8" style="background:#06B6D4;border-radius:8px 0 0 8px"></td>
+<td width="64" align="center" valign="middle"><img src="https://img.icons8.com/fluency/96/search.png" width="48" alt="search"/></td>
+<td align="left" valign="middle"><b style="font-size:20px;color:#06B6D4">1️⃣ Parte 1 — Plain RAG</b><br/>
+<sub style="color:#a0a0b0">20 min — Una búsqueda vectorial, una llamada al LLM</sub></td>
+</tr>
+</table>
 
 </div>
 
@@ -278,15 +282,16 @@ Mirá el TUI. Vas a ver exactamente **una llamada `vector`** seguida de **una ll
 <!--                          ✦   PARTE 2: GRAPH RAG   ✦                     -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-<h2 id="2%EF%B8%8F%E2%83%A3-parte-2--graph-rag-20-min">2️⃣ Parte 2 — Graph RAG</h2>
+<div id="2%EF%B8%8F%E2%83%A3-parte-2--graph-rag-20-min" align="center">
 
-<div align="center">
-
-<table width="100%"><tr>
-<td width="72" align="center" valign="middle" bgcolor="#0f0f1e"><img src="https://img.icons8.com/fluency/96/branch.png" width="56" alt="graph"/></td>
-<td valign="middle"><b style="font-size:18px;color:#8B5CF6">Parte 2 — Graph RAG</b><br/>
-<sub>20 min — Agregá vecindario + blast radius de Neo4j</sub></td>
-</tr></table>
+<table width="100%" cellspacing="0" cellpadding="8" style="background:linear-gradient(90deg,#1a1a2e,#0f0f1e);border:1px solid #8B5CF6;border-radius:8px">
+<tr>
+<td width="8" style="background:#8B5CF6;border-radius:8px 0 0 8px"></td>
+<td width="64" align="center" valign="middle"><img src="https://img.icons8.com/fluency/96/branch.png" width="48" alt="graph"/></td>
+<td align="left" valign="middle"><b style="font-size:20px;color:#8B5CF6">2️⃣ Parte 2 — Graph RAG</b><br/>
+<sub style="color:#a0a0b0">20 min — Agregá vecindario + blast radius de Neo4j</sub></td>
+</tr>
+</table>
 
 </div>
 
@@ -370,15 +375,16 @@ Deberías ver la cascada visualizada como un grafo. ✨
 <!--                         ✦   PARTE 3: AGENTIC RAG   ✦                    -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-<h2 id="3%EF%B8%8F%E2%83%A3-parte-3--agentic-rag-25-min">3️⃣ Parte 3 — Agentic RAG</h2>
+<div id="3%EF%B8%8F%E2%83%A3-parte-3--agentic-rag-25-min" align="center">
 
-<div align="center">
-
-<table width="100%"><tr>
-<td width="72" align="center" valign="middle" bgcolor="#0f0f1e"><img src="https://img.icons8.com/fluency/96/artificial-intelligence.png" width="56" alt="agentic"/></td>
-<td valign="middle"><b style="font-size:18px;color:#EC4899">Parte 3 — Agentic RAG</b><br/>
-<sub>25 min — Triage → ruteo → especialista</sub></td>
-</tr></table>
+<table width="100%" cellspacing="0" cellpadding="8" style="background:linear-gradient(90deg,#1a1a2e,#0f0f1e);border:1px solid #EC4899;border-radius:8px">
+<tr>
+<td width="8" style="background:#EC4899;border-radius:8px 0 0 8px"></td>
+<td width="64" align="center" valign="middle"><img src="https://img.icons8.com/fluency/96/artificial-intelligence.png" width="48" alt="agentic"/></td>
+<td align="left" valign="middle"><b style="font-size:20px;color:#EC4899">3️⃣ Parte 3 — Agentic RAG</b><br/>
+<sub style="color:#a0a0b0">25 min — Triage → ruteo → especialista</sub></td>
+</tr>
+</table>
 
 </div>
 
@@ -465,15 +471,16 @@ make tui kafka-broker        # 🌈 pestaña 3
 <!--                         ✦   PARTE 4: EXPLORACIÓN   ✦                    -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-<h2 id="4%EF%B8%8F%E2%83%A3-parte-4--exploraci%C3%B3n-15-min">4️⃣ Parte 4 — Exploración</h2>
+<div id="4%EF%B8%8F%E2%83%A3-parte-4--exploraci%C3%B3n-15-min" align="center">
 
-<div align="center">
-
-<table width="100%"><tr>
-<td width="72" align="center" valign="middle" bgcolor="#0f0f1e"><img src="https://img.icons8.com/fluency/96/compass.png" width="56" alt="explore"/></td>
-<td valign="middle"><b style="font-size:18px;color:#F43F5E">Parte 4 — Exploración</b><br/>
-<sub>15 min — Rompé, agregá, trazá código</sub></td>
-</tr></table>
+<table width="100%" cellspacing="0" cellpadding="8" style="background:linear-gradient(90deg,#1a1a2e,#0f0f1e);border:1px solid #F43F5E;border-radius:8px">
+<tr>
+<td width="8" style="background:#F43F5E;border-radius:8px 0 0 8px"></td>
+<td width="64" align="center" valign="middle"><img src="https://img.icons8.com/fluency/96/compass.png" width="48" alt="explore"/></td>
+<td align="left" valign="middle"><b style="font-size:20px;color:#F43F5E">4️⃣ Parte 4 — Exploración</b><br/>
+<sub style="color:#a0a0b0">15 min — Rompé, agregá, trazá código</sub></td>
+</tr>
+</table>
 
 </div>
 
@@ -579,15 +586,16 @@ consulta de grafo lo descubre automáticamente — *no tocaste código de agente
 <!--                              ✦   RESUMEN   ✦                            -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-<h2 id="-resumen">🏁 Resumen</h2>
+<div id="-resumen" align="center">
 
-<div align="center">
-
-<table width="100%"><tr>
-<td width="72" align="center" valign="middle" bgcolor="#0f0f1e"><img src="https://img.icons8.com/fluency/96/checkmark.png" width="56" alt="recap"/></td>
-<td valign="middle"><b style="font-size:18px;color:#06B6D4">Resumen</b><br/>
-<sub>Dónde vive todo + la respuesta en una línea</sub></td>
-</tr></table>
+<table width="100%" cellspacing="0" cellpadding="8" style="background:linear-gradient(90deg,#1a1a2e,#0f0f1e);border:1px solid #06B6D4;border-radius:8px">
+<tr>
+<td width="8" style="background:#06B6D4;border-radius:8px 0 0 8px"></td>
+<td width="64" align="center" valign="middle"><img src="https://img.icons8.com/fluency/96/checkmark.png" width="48" alt="recap"/></td>
+<td align="left" valign="middle"><b style="font-size:20px;color:#06B6D4">🏁 Resumen</b><br/>
+<sub style="color:#a0a0b0">Dónde vive todo + la respuesta en una línea</sub></td>
+</tr>
+</table>
 
 </div>
 
@@ -661,15 +669,16 @@ consulta de grafo lo descubre automáticamente — *no tocaste código de agente
 <!--                       ✦   DESAFÍOS ADICIONALES   ✦                      -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-<h2 id="-desaf%C3%ADos-adicionales">🚀 Desafíos Adicionales</h2>
+<div id="-desaf%C3%ADos-adicionales" align="center">
 
-<div align="center">
-
-<table width="100%"><tr>
-<td width="72" align="center" valign="middle" bgcolor="#0f0f1e"><img src="https://img.icons8.com/fluency/96/rocket.png" width="56" alt="challenges"/></td>
-<td valign="middle"><b style="font-size:18px;color:#EC4899">Desafíos Adicionales</b><br/>
-<sub>Seguí — reflexión, fan-out, memoria, LLM reasoning</sub></td>
-</tr></table>
+<table width="100%" cellspacing="0" cellpadding="8" style="background:linear-gradient(90deg,#1a1a2e,#0f0f1e);border:1px solid #EC4899;border-radius:8px">
+<tr>
+<td width="8" style="background:#EC4899;border-radius:8px 0 0 8px"></td>
+<td width="64" align="center" valign="middle"><img src="https://img.icons8.com/fluency/96/rocket.png" width="48" alt="challenges"/></td>
+<td align="left" valign="middle"><b style="font-size:20px;color:#EC4899">🚀 Desafíos Adicionales</b><br/>
+<sub style="color:#a0a0b0">Seguí — reflexión, fan-out, memoria, LLM reasoning</sub></td>
+</tr>
+</table>
 
 </div>
 

@@ -42,15 +42,16 @@
 <!--                           ✦   THE SCENARIO   ✦                          -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-<h2 id="-the-scenario">🎬 The Scenario</h2>
+<div id="-the-scenario" align="center">
 
-<div align="center">
-
-<table width="100%"><tr>
-<td width="72" align="center" valign="middle"><img src="https://img.icons8.com/fluency/96/pagerduty.png" width="56" alt="alert"/></td>
-<td valign="middle"><b style="font-size:18px">The Scenario</b><br/>
-<sub>An on-call incident lands in your lap at 3am.</sub></td>
-</tr></table>
+<table width="100%" cellspacing="0" cellpadding="8" style="background:linear-gradient(90deg,#1a1a2e,#0f0f1e);border:1px solid #F43F5E;border-radius:8px">
+<tr>
+<td width="8" style="background:#F43F5E;border-radius:8px 0 0 8px"></td>
+<td width="64" align="center" valign="middle"><img src="https://img.icons8.com/fluency/96/pagerduty.png" width="48" alt="alert"/></td>
+<td align="left" valign="middle"><b style="font-size:20px;color:#F43F5E">🎬 The Scenario</b><br/>
+<sub style="color:#a0a0b0">An on-call incident lands in your lap at 3am.</sub></td>
+</tr>
+</table>
 
 </div>
 
@@ -89,15 +90,16 @@ more context and makes better decisions. By the end you'll see exactly where
 <!--                          ✦   THE THREE MODES   ✦                        -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-<h2 id="%EF%B8%8F-the-three-modes">🗺️ The Three Modes</h2>
+<div id="%EF%B8%8F-the-three-modes" align="center">
 
-<div align="center">
-
-<table width="100%"><tr>
-<td width="72" align="center" valign="middle"><img src="https://img.icons8.com/fluency/96/flow-chart.png" width="56" alt="modes"/></td>
-<td valign="middle"><b style="font-size:18px">The Three Modes</b><br/>
-<sub>Same incident. Three retrieval architectures. Watch how it evolves ↓</sub></td>
-</tr></table>
+<table width="100%" cellspacing="0" cellpadding="8" style="background:linear-gradient(90deg,#1a1a2e,#0f0f1e);border:1px solid #8B5CF6;border-radius:8px">
+<tr>
+<td width="8" style="background:#8B5CF6;border-radius:8px 0 0 8px"></td>
+<td width="64" align="center" valign="middle"><img src="https://img.icons8.com/fluency/96/flow-chart.png" width="48" alt="modes"/></td>
+<td align="left" valign="middle"><b style="font-size:20px;color:#8B5CF6">🗺️ The Three Modes</b><br/>
+<sub style="color:#a0a0b0">Same incident. Three retrieval architectures. Watch how it evolves ↓</sub></td>
+</tr>
+</table>
 
 </div>
 
@@ -181,15 +183,16 @@ flowchart LR
 <!--                            ✦   PART 0: SETUP   ✦                        -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-<h2 id="0%EF%B8%8F%E2%83%A3-part-0--setup-5-min">0️⃣ Part 0 — Setup</h2>
+<div id="0%EF%B8%8F%E2%83%A3-part-0--setup-5-min" align="center">
 
-<div align="center">
-
-<table width="100%"><tr>
-<td width="72" align="center" valign="middle" bgcolor="#0f0f1e"><img src="https://img.icons8.com/fluency/96/settings.png" width="56" alt="setup"/></td>
-<td valign="middle"><b style="font-size:18px">Part 0 — Setup</b><br/>
-<sub>5 min — Spin up Qdrant + Neo4j, load data</sub></td>
-</tr></table>
+<table width="100%" cellspacing="0" cellpadding="8" style="background:linear-gradient(90deg,#1a1a2e,#0f0f1e);border:1px solid #8B5CF6;border-radius:8px">
+<tr>
+<td width="8" style="background:#8B5CF6;border-radius:8px 0 0 8px"></td>
+<td width="64" align="center" valign="middle"><img src="https://img.icons8.com/fluency/96/settings.png" width="48" alt="setup"/></td>
+<td align="left" valign="middle"><b style="font-size:20px;color:#8B5CF6">0️⃣ Part 0 — Setup</b><br/>
+<sub style="color:#a0a0b0">5 min — Spin up Qdrant + Neo4j, load data</sub></td>
+</tr>
+</table>
 
 </div>
 
@@ -219,15 +222,16 @@ make browse-graph   # 🌐 opens Neo4j browser at http://localhost:7474
 <!--                          ✦   PART 1: PLAIN RAG   ✦                      -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-<h2 id="1%EF%B8%8F%E2%83%A3-part-1--plain-rag-20-min">1️⃣ Part 1 — Plain RAG</h2>
+<div id="1%EF%B8%8F%E2%83%A3-part-1--plain-rag-20-min" align="center">
 
-<div align="center">
-
-<table width="100%"><tr>
-<td width="72" align="center" valign="middle" bgcolor="#0f0f1e"><img src="https://img.icons8.com/fluency/96/search.png" width="56" alt="search"/></td>
-<td valign="middle"><b style="font-size:18px;color:#06B6D4">Part 1 — Plain RAG</b><br/>
-<sub>20 min — One vector search, one LLM call, done</sub></td>
-</tr></table>
+<table width="100%" cellspacing="0" cellpadding="8" style="background:linear-gradient(90deg,#1a1a2e,#0f0f1e);border:1px solid #06B6D4;border-radius:8px">
+<tr>
+<td width="8" style="background:#06B6D4;border-radius:8px 0 0 8px"></td>
+<td width="64" align="center" valign="middle"><img src="https://img.icons8.com/fluency/96/search.png" width="48" alt="search"/></td>
+<td align="left" valign="middle"><b style="font-size:20px;color:#06B6D4">1️⃣ Part 1 — Plain RAG</b><br/>
+<sub style="color:#a0a0b0">20 min — One vector search, one LLM call, done</sub></td>
+</tr>
+</table>
 
 </div>
 
@@ -278,15 +282,16 @@ Watch the TUI. You'll see exactly **one `vector` tool call** followed by **one `
 <!--                          ✦   PART 2: GRAPH RAG   ✦                      -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-<h2 id="2%EF%B8%8F%E2%83%A3-part-2--graph-rag-20-min">2️⃣ Part 2 — Graph RAG</h2>
+<div id="2%EF%B8%8F%E2%83%A3-part-2--graph-rag-20-min" align="center">
 
-<div align="center">
-
-<table width="100%"><tr>
-<td width="72" align="center" valign="middle" bgcolor="#0f0f1e"><img src="https://img.icons8.com/fluency/96/branch.png" width="56" alt="graph"/></td>
-<td valign="middle"><b style="font-size:18px;color:#8B5CF6">Part 2 — Graph RAG</b><br/>
-<sub>20 min — Add Neo4j neighborhood + blast radius</sub></td>
-</tr></table>
+<table width="100%" cellspacing="0" cellpadding="8" style="background:linear-gradient(90deg,#1a1a2e,#0f0f1e);border:1px solid #8B5CF6;border-radius:8px">
+<tr>
+<td width="8" style="background:#8B5CF6;border-radius:8px 0 0 8px"></td>
+<td width="64" align="center" valign="middle"><img src="https://img.icons8.com/fluency/96/branch.png" width="48" alt="graph"/></td>
+<td align="left" valign="middle"><b style="font-size:20px;color:#8B5CF6">2️⃣ Part 2 — Graph RAG</b><br/>
+<sub style="color:#a0a0b0">20 min — Add Neo4j neighborhood + blast radius</sub></td>
+</tr>
+</table>
 
 </div>
 
@@ -370,15 +375,16 @@ You should see the cascade visualised as a graph. ✨
 <!--                         ✦   PART 3: AGENTIC RAG   ✦                     -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-<h2 id="3%EF%B8%8F%E2%83%A3-part-3--agentic-rag-25-min">3️⃣ Part 3 — Agentic RAG</h2>
+<div id="3%EF%B8%8F%E2%83%A3-part-3--agentic-rag-25-min" align="center">
 
-<div align="center">
-
-<table width="100%"><tr>
-<td width="72" align="center" valign="middle" bgcolor="#0f0f1e"><img src="https://img.icons8.com/fluency/96/artificial-intelligence.png" width="56" alt="agentic"/></td>
-<td valign="middle"><b style="font-size:18px;color:#EC4899">Part 3 — Agentic RAG</b><br/>
-<sub>25 min — Triage → route → specialist</sub></td>
-</tr></table>
+<table width="100%" cellspacing="0" cellpadding="8" style="background:linear-gradient(90deg,#1a1a2e,#0f0f1e);border:1px solid #EC4899;border-radius:8px">
+<tr>
+<td width="8" style="background:#EC4899;border-radius:8px 0 0 8px"></td>
+<td width="64" align="center" valign="middle"><img src="https://img.icons8.com/fluency/96/artificial-intelligence.png" width="48" alt="agentic"/></td>
+<td align="left" valign="middle"><b style="font-size:20px;color:#EC4899">3️⃣ Part 3 — Agentic RAG</b><br/>
+<sub style="color:#a0a0b0">25 min — Triage → route → specialist</sub></td>
+</tr>
+</table>
 
 </div>
 
@@ -465,15 +471,16 @@ make tui kafka-broker        # 🌈 tab 3
 <!--                         ✦   PART 4: EXPLORATION   ✦                     -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-<h2 id="4%EF%B8%8F%E2%83%A3-part-4--exploration-15-min">4️⃣ Part 4 — Exploration</h2>
+<div id="4%EF%B8%8F%E2%83%A3-part-4--exploration-15-min" align="center">
 
-<div align="center">
-
-<table width="100%"><tr>
-<td width="72" align="center" valign="middle" bgcolor="#0f0f1e"><img src="https://img.icons8.com/fluency/96/compass.png" width="56" alt="explore"/></td>
-<td valign="middle"><b style="font-size:18px;color:#F43F5E">Part 4 — Exploration</b><br/>
-<sub>15 min — Break things, add services, trace code</sub></td>
-</tr></table>
+<table width="100%" cellspacing="0" cellpadding="8" style="background:linear-gradient(90deg,#1a1a2e,#0f0f1e);border:1px solid #F43F5E;border-radius:8px">
+<tr>
+<td width="8" style="background:#F43F5E;border-radius:8px 0 0 8px"></td>
+<td width="64" align="center" valign="middle"><img src="https://img.icons8.com/fluency/96/compass.png" width="48" alt="explore"/></td>
+<td align="left" valign="middle"><b style="font-size:20px;color:#F43F5E">4️⃣ Part 4 — Exploration</b><br/>
+<sub style="color:#a0a0b0">15 min — Break things, add services, trace code</sub></td>
+</tr>
+</table>
 
 </div>
 
@@ -579,15 +586,16 @@ graph query discovers it automatically — *you didn't change any agent code*.
 <!--                              ✦   RECAP   ✦                              -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-<h2 id="-recap">🏁 Recap</h2>
+<div id="-recap" align="center">
 
-<div align="center">
-
-<table width="100%"><tr>
-<td width="72" align="center" valign="middle" bgcolor="#0f0f1e"><img src="https://img.icons8.com/fluency/96/checkmark.png" width="56" alt="recap"/></td>
-<td valign="middle"><b style="font-size:18px;color:#06B6D4">Recap</b><br/>
-<sub>Where everything lives + the one-line answer</sub></td>
-</tr></table>
+<table width="100%" cellspacing="0" cellpadding="8" style="background:linear-gradient(90deg,#1a1a2e,#0f0f1e);border:1px solid #06B6D4;border-radius:8px">
+<tr>
+<td width="8" style="background:#06B6D4;border-radius:8px 0 0 8px"></td>
+<td width="64" align="center" valign="middle"><img src="https://img.icons8.com/fluency/96/checkmark.png" width="48" alt="recap"/></td>
+<td align="left" valign="middle"><b style="font-size:20px;color:#06B6D4">🏁 Recap</b><br/>
+<sub style="color:#a0a0b0">Where everything lives + the one-line answer</sub></td>
+</tr>
+</table>
 
 </div>
 
@@ -661,15 +669,16 @@ graph query discovers it automatically — *you didn't change any agent code*.
 <!--                       ✦   FURTHER CHALLENGES   ✦                        -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-<h2 id="-further-challenges">🚀 Further Challenges</h2>
+<div id="-further-challenges" align="center">
 
-<div align="center">
-
-<table width="100%"><tr>
-<td width="72" align="center" valign="middle" bgcolor="#0f0f1e"><img src="https://img.icons8.com/fluency/96/rocket.png" width="56" alt="challenges"/></td>
-<td valign="middle"><b style="font-size:18px;color:#EC4899">Further Challenges</b><br/>
-<sub>Keep going — reflection, fan-out, memory, LLM reasoning</sub></td>
-</tr></table>
+<table width="100%" cellspacing="0" cellpadding="8" style="background:linear-gradient(90deg,#1a1a2e,#0f0f1e);border:1px solid #EC4899;border-radius:8px">
+<tr>
+<td width="8" style="background:#EC4899;border-radius:8px 0 0 8px"></td>
+<td width="64" align="center" valign="middle"><img src="https://img.icons8.com/fluency/96/rocket.png" width="48" alt="challenges"/></td>
+<td align="left" valign="middle"><b style="font-size:20px;color:#EC4899">🚀 Further Challenges</b><br/>
+<sub style="color:#a0a0b0">Keep going — reflection, fan-out, memory, LLM reasoning</sub></td>
+</tr>
+</table>
 
 </div>
 
