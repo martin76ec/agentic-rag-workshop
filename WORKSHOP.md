@@ -81,30 +81,78 @@ more context and makes better decisions. By the end you'll see exactly where
 
 ## 🗺️ The Three Modes
 
-```
-   🔵 Mode 1: Plain RAG          🟣 Mode 2: Graph RAG          🌈 Mode 3: Agentic RAG
-   ───────────────────           ───────────────────           ─────────────────────
-        Incident                       Incident                       Incident
-           │                              │                              │
-           ▼                              ▼                              ▼
-   ┌──────────────┐              ┌──────────────┐              ┌────────────────┐
-   │  Vector       │              │  Vector       │              │  Triage Agent  │
-   │  Search       │              │  Search       │              │ vector + graph │
-   └──────┬───────┘              └──────┬───────┘              └────────┬───────┘
-          ▼                              ▼                                 │
-   ┌──────────────┐              ┌──────────────┐                          ▼
-   │      LLM      │              │ Neo4j: nbhd   │              ┌────────────────┐
-   └──────┬───────┘              └──────┬───────┘              │  Router Agent  │
-          ▼                              ▼                       │ pick specialist│
-       Response                   ┌──────────────┐              └────────┬───────┘
-                                  │ Neo4j: blast  │                        │
-                                  └──────┬───────┘                        ▼
-                                         ▼                       ┌────────────────┐
-                                  ┌──────────────┐              │  Specialist    │
-                                  │      LLM      │              │  vector + LLM  │
-                                  └──────┬───────┘              └────────┬───────┘
-                                         ▼                                 ▼
-                                      Response                      Final Report
+<div align="center">
+
+<img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=600&size=18&duration=2400&pause=600&color=8B5CF6&center=true&vCenter=true&width=720&lines=Same+incident.+Three+retrieval+architectures.;Plain+%E2%86%92+one+step.+Graph+%E2%86%92+three.+Agentic+%E2%86%92+adaptive.;Watch+how+it+evolves+%E2%86%93" alt="Modes tagline"/>
+
+</div>
+
+<br/>
+
+<div align="center">
+
+<table>
+<tr>
+<td align="center" width="33%">
+
+<img src="https://img.shields.io/badge/🔵%20Mode%201-Plain%20RAG-06B6D4?style=for-the-badge&labelColor=0f0f1e" alt="Plain RAG"/>
+
+</td>
+<td align="center" width="33%">
+
+<img src="https://img.shields.io/badge/🟣%20Mode%202-Graph%20RAG-8B5CF6?style=for-the-badge&labelColor=0f0f1e" alt="Graph RAG"/>
+
+</td>
+<td align="center" width="33%">
+
+<img src="https://img.shields.io/badge/🌈%20Mode%203-Agentic%20RAG-EC4899?style=for-the-badge&labelColor=0f0f1e" alt="Agentic RAG"/>
+
+</td>
+</tr>
+</table>
+
+</div>
+
+```mermaid
+flowchart LR
+    classDef incident fill:#0f0f1e,stroke:#F43F5E,stroke-width:2px,color:#fff
+    classDef plain    fill:#0f0f1e,stroke:#06B6D4,stroke-width:2px,color:#06B6D4
+    classDef graph    fill:#0f0f1e,stroke:#8B5CF6,stroke-width:2px,color:#8B5CF6
+    classDef agentic  fill:#0f0f1e,stroke:#EC4899,stroke-width:2px,color:#EC4899
+    classDef result   fill:#1a1a2e,stroke:#F43F5E,stroke-width:2px,color:#fff
+
+    I([🚨 Incident<br/>kafka-broker]):::incident
+
+    subgraph P [" 🔵 Plain RAG "]
+        direction TB
+        P1[🔍 Vector Search]:::plain
+        P2[🧠 LLM]:::plain
+        P3([📄 Response]):::result
+        P1 --> P2 --> P3
+    end
+
+    subgraph G [" 🟣 Graph RAG "]
+        direction TB
+        G1[🔍 Vector Search]:::graph
+        G2[🕸️ Neo4j · Neighborhood]:::graph
+        G3[💥 Neo4j · Blast Radius]:::graph
+        G4[🧠 LLM]:::graph
+        G5([📄 Response]):::result
+        G1 --> G2 --> G3 --> G4 --> G5
+    end
+
+    subgraph A [" 🌈 Agentic RAG "]
+        direction TB
+        A1[🧠 Triage Agent<br/><sub>vector + graph</sub>]:::agentic
+        A2[🔀 Router Agent<br/><sub>pick specialist</sub>]:::agentic
+        A3[🎯 Specialist<br/><sub>vector + expert LLM</sub>]:::agentic
+        A4([📊 Final Report]):::result
+        A1 --> A2 --> A3 --> A4
+    end
+
+    I --> P1
+    I --> G1
+    I --> A1
 ```
 
 <br/>
