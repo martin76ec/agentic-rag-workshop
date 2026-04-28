@@ -42,9 +42,17 @@
 <!--                           ✦   THE SCENARIO   ✦                          -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-<h2 id="-the-scenario" align="center">
-<img src="https://capsule-render.vercel.app/api?type=waving&color=F43F5E&height=44&section=header&text=%F0%9F%8E%AC%20The%20Scenario&fontColor=ffffff&fontSize=22&fontAlignY=50&desc=An%20on-call%20incident%20lands%20in%20your%20lap%20at%203am&descSize=11&descAlignY=68&descColor=e2e2e2&animation=fadeIn" alt="The Scenario" width="100%"/>
-</h2>
+<h2 id="-the-scenario">🎬 The Scenario</h2>
+
+<div align="center">
+
+<table width="100%"><tr>
+<td width="72" align="center" valign="middle"><img src="https://img.icons8.com/fluency/96/pagerduty.png" width="56" alt="alert"/></td>
+<td valign="middle"><b style="font-size:18px">The Scenario</b><br/>
+<sub>An on-call incident lands in your lap at 3am.</sub></td>
+</tr></table>
+
+</div>
 
 <div align="center">
 
@@ -81,9 +89,17 @@ more context and makes better decisions. By the end you'll see exactly where
 <!--                          ✦   THE THREE MODES   ✦                        -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-<h2 id="%EF%B8%8F-the-three-modes" align="center">
-<img src="https://capsule-render.vercel.app/api?type=waving&color=8B5CF6&height=44&section=header&text=%F0%9F%97%BA%EF%B8%8F%20The%20Three%20Modes&fontColor=ffffff&fontSize=22&fontAlignY=50&desc=Same%20incident.%20Three%20retrieval%20architectures.&descSize=11&descAlignY=68&descColor=e2e2e2&animation=fadeIn" alt="The Three Modes" width="100%"/>
-</h2>
+<h2 id="%EF%B8%8F-the-three-modes">🗺️ The Three Modes</h2>
+
+<div align="center">
+
+<table width="100%"><tr>
+<td width="72" align="center" valign="middle"><img src="https://img.icons8.com/fluency/96/flow-chart.png" width="56" alt="modes"/></td>
+<td valign="middle"><b style="font-size:18px">The Three Modes</b><br/>
+<sub>Same incident. Three retrieval architectures. Watch how it evolves ↓</sub></td>
+</tr></table>
+
+</div>
 
 <div align="center">
 
@@ -165,9 +181,17 @@ flowchart LR
 <!--                            ✦   PART 0: SETUP   ✦                        -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-<h2 id="0%EF%B8%8F%E2%83%A3-part-0--setup-5-min" align="center">
-<img src="https://capsule-render.vercel.app/api?type=waving&color=8B5CF6&height=44&section=header&text=0%EF%B8%8F%E2%83%A3%20Part%200%20%E2%80%94%20Setup&fontColor=ffffff&fontSize=22&fontAlignY=50&desc=5%20min%20%E2%80%94%20spin%20up%20Qdrant%20%2B%20Neo4j%2C%20load%20data&descSize=11&descAlignY=68&descColor=e2e2e2&animation=fadeIn" alt="Part 0 — Setup" width="100%"/>
-</h2>
+<h2 id="0%EF%B8%8F%E2%83%A3-part-0--setup-5-min">0️⃣ Part 0 — Setup</h2>
+
+<div align="center">
+
+<table width="100%"><tr>
+<td width="72" align="center" valign="middle" bgcolor="#0f0f1e"><img src="https://img.icons8.com/fluency/96/settings.png" width="56" alt="setup"/></td>
+<td valign="middle"><b style="font-size:18px">Part 0 — Setup</b><br/>
+<sub>5 min — Spin up Qdrant + Neo4j, load data</sub></td>
+</tr></table>
+
+</div>
 
 If you haven't already:
 
@@ -195,9 +219,17 @@ make browse-graph   # 🌐 opens Neo4j browser at http://localhost:7474
 <!--                          ✦   PART 1: PLAIN RAG   ✦                      -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-<h2 id="1%EF%B8%8F%E2%83%A3-part-1--plain-rag-20-min" align="center">
-<img src="https://capsule-render.vercel.app/api?type=waving&color=06B6D4&height=44&section=header&text=1%EF%B8%8F%E2%83%A3%20Part%201%20%E2%80%94%20Plain%20RAG&fontColor=ffffff&fontSize=22&fontAlignY=50&desc=20%20min%20%E2%80%94%20one%20vector%20search%2C%20one%20LLM%20call%2C%20done&descSize=11&descAlignY=68&descColor=e2e2e2&animation=fadeIn" alt="Part 1 — Plain RAG" width="100%"/>
-</h2>
+<h2 id="1%EF%B8%8F%E2%83%A3-part-1--plain-rag-20-min">1️⃣ Part 1 — Plain RAG</h2>
+
+<div align="center">
+
+<table width="100%"><tr>
+<td width="72" align="center" valign="middle" bgcolor="#0f0f1e"><img src="https://img.icons8.com/fluency/96/search.png" width="56" alt="search"/></td>
+<td valign="middle"><b style="font-size:18px;color:#06B6D4">Part 1 — Plain RAG</b><br/>
+<sub>20 min — One vector search, one LLM call, done</sub></td>
+</tr></table>
+
+</div>
 
 <img src="https://img.shields.io/badge/LLM%20calls-1-06B6D4?style=flat-square&labelColor=0f0f1e"/>
 <img src="https://img.shields.io/badge/retrieval%20steps-1-06B6D4?style=flat-square&labelColor=0f0f1e"/>
@@ -246,9 +278,17 @@ Watch the TUI. You'll see exactly **one `vector` tool call** followed by **one `
 <!--                          ✦   PART 2: GRAPH RAG   ✦                      -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-<h2 id="2%EF%B8%8F%E2%83%A3-part-2--graph-rag-20-min" align="center">
-<img src="https://capsule-render.vercel.app/api?type=waving&color=8B5CF6&height=44&section=header&text=2%EF%B8%8F%E2%83%A3%20Part%202%20%E2%80%94%20Graph%20RAG&fontColor=ffffff&fontSize=22&fontAlignY=50&desc=20%20min%20%E2%80%94%20add%20Neo4j%20neighborhood%20%2B%20blast%20radius&descSize=11&descAlignY=68&descColor=e2e2e2&animation=fadeIn" alt="Part 2 — Graph RAG" width="100%"/>
-</h2>
+<h2 id="2%EF%B8%8F%E2%83%A3-part-2--graph-rag-20-min">2️⃣ Part 2 — Graph RAG</h2>
+
+<div align="center">
+
+<table width="100%"><tr>
+<td width="72" align="center" valign="middle" bgcolor="#0f0f1e"><img src="https://img.icons8.com/fluency/96/branch.png" width="56" alt="graph"/></td>
+<td valign="middle"><b style="font-size:18px;color:#8B5CF6">Part 2 — Graph RAG</b><br/>
+<sub>20 min — Add Neo4j neighborhood + blast radius</sub></td>
+</tr></table>
+
+</div>
 
 <img src="https://img.shields.io/badge/LLM%20calls-1-8B5CF6?style=flat-square&labelColor=0f0f1e"/>
 <img src="https://img.shields.io/badge/retrieval%20steps-3-8B5CF6?style=flat-square&labelColor=0f0f1e"/>
@@ -330,9 +370,17 @@ You should see the cascade visualised as a graph. ✨
 <!--                         ✦   PART 3: AGENTIC RAG   ✦                     -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-<h2 id="3%EF%B8%8F%E2%83%A3-part-3--agentic-rag-25-min" align="center">
-<img src="https://capsule-render.vercel.app/api?type=waving&color=EC4899&height=44&section=header&text=3%EF%B8%8F%E2%83%A3%20Part%203%20%E2%80%94%20Agentic%20RAG&fontColor=ffffff&fontSize=22&fontAlignY=50&desc=25%20min%20%E2%80%94%20triage%20%E2%86%92%20route%20%E2%86%92%20specialist&descSize=11&descAlignY=68&descColor=e2e2e2&animation=fadeIn" alt="Part 3 — Agentic RAG" width="100%"/>
-</h2>
+<h2 id="3%EF%B8%8F%E2%83%A3-part-3--agentic-rag-25-min">3️⃣ Part 3 — Agentic RAG</h2>
+
+<div align="center">
+
+<table width="100%"><tr>
+<td width="72" align="center" valign="middle" bgcolor="#0f0f1e"><img src="https://img.icons8.com/fluency/96/artificial-intelligence.png" width="56" alt="agentic"/></td>
+<td valign="middle"><b style="font-size:18px;color:#EC4899">Part 3 — Agentic RAG</b><br/>
+<sub>25 min — Triage → route → specialist</sub></td>
+</tr></table>
+
+</div>
 
 <img src="https://img.shields.io/badge/LLM%20calls-2-EC4899?style=flat-square&labelColor=0f0f1e"/>
 <img src="https://img.shields.io/badge/retrieval%20steps-4–5-EC4899?style=flat-square&labelColor=0f0f1e"/>
@@ -417,9 +465,17 @@ make tui kafka-broker        # 🌈 tab 3
 <!--                         ✦   PART 4: EXPLORATION   ✦                     -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-<h2 id="4%EF%B8%8F%E2%83%A3-part-4--exploration-15-min" align="center">
-<img src="https://capsule-render.vercel.app/api?type=waving&color=F43F5E&height=44&section=header&text=4%EF%B8%8F%E2%83%A3%20Part%204%20%E2%80%94%20Exploration&fontColor=ffffff&fontSize=22&fontAlignY=50&desc=15%20min%20%E2%80%94%20break%20things%2C%20add%20services%2C%20trace%20code&descSize=11&descAlignY=68&descColor=e2e2e2&animation=fadeIn" alt="Part 4 — Exploration" width="100%"/>
-</h2>
+<h2 id="4%EF%B8%8F%E2%83%A3-part-4--exploration-15-min">4️⃣ Part 4 — Exploration</h2>
+
+<div align="center">
+
+<table width="100%"><tr>
+<td width="72" align="center" valign="middle" bgcolor="#0f0f1e"><img src="https://img.icons8.com/fluency/96/compass.png" width="56" alt="explore"/></td>
+<td valign="middle"><b style="font-size:18px;color:#F43F5E">Part 4 — Exploration</b><br/>
+<sub>15 min — Break things, add services, trace code</sub></td>
+</tr></table>
+
+</div>
 
 <details open>
   <summary><b>🎯 Try different failure points</b></summary>
@@ -523,9 +579,17 @@ graph query discovers it automatically — *you didn't change any agent code*.
 <!--                              ✦   RECAP   ✦                              -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-<h2 id="-recap" align="center">
-<img src="https://capsule-render.vercel.app/api?type=waving&color=06B6D4&height=44&section=header&text=%F0%9F%8F%81%20Recap&fontColor=ffffff&fontSize=22&fontAlignY=50&desc=Where%20everything%20lives%20%2B%20the%20one-line%20answer&descSize=11&descAlignY=68&descColor=e2e2e2&animation=fadeIn" alt="Recap" width="100%"/>
-</h2>
+<h2 id="-recap">🏁 Recap</h2>
+
+<div align="center">
+
+<table width="100%"><tr>
+<td width="72" align="center" valign="middle" bgcolor="#0f0f1e"><img src="https://img.icons8.com/fluency/96/checkmark.png" width="56" alt="recap"/></td>
+<td valign="middle"><b style="font-size:18px;color:#06B6D4">Recap</b><br/>
+<sub>Where everything lives + the one-line answer</sub></td>
+</tr></table>
+
+</div>
 
 <div align="center">
 
@@ -597,9 +661,17 @@ graph query discovers it automatically — *you didn't change any agent code*.
 <!--                       ✦   FURTHER CHALLENGES   ✦                        -->
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
-<h2 id="-further-challenges" align="center">
-<img src="https://capsule-render.vercel.app/api?type=waving&color=EC4899&height=44&section=header&text=%F0%9F%9A%80%20Further%20Challenges&fontColor=ffffff&fontSize=22&fontAlignY=50&desc=Keep%20going%20%E2%80%94%20reflection%2C%20fan-out%2C%20memory%2C%20LLM%20reasoning&descSize=11&descAlignY=68&descColor=e2e2e2&animation=fadeIn" alt="Further Challenges" width="100%"/>
-</h2>
+<h2 id="-further-challenges">🚀 Further Challenges</h2>
+
+<div align="center">
+
+<table width="100%"><tr>
+<td width="72" align="center" valign="middle" bgcolor="#0f0f1e"><img src="https://img.icons8.com/fluency/96/rocket.png" width="56" alt="challenges"/></td>
+<td valign="middle"><b style="font-size:18px;color:#EC4899">Further Challenges</b><br/>
+<sub>Keep going — reflection, fan-out, memory, LLM reasoning</sub></td>
+</tr></table>
+
+</div>
 
 > *If you finish early or want to keep going after the workshop ends.*
 
