@@ -43,7 +43,7 @@
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
 <a id="-the-scenario"></a>
-<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=F43F5E&height=56&section=header&text=%F0%9F%8E%AC%20The%20Scenario&fontColor=ffffff&fontSize=22&fontAlignY=36&desc=An%20on-call%20incident%20lands%20in%20your%20lap%20at%203am&descAlignY=68&descSize=13&descColor=e2e2e2&animation=fadeIn" alt="The Scenario"/>
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=20,16,6&height=56&section=header&text=The%20Scenario&fontColor=ffffff&fontSize=22&fontAlignY=36&desc=An%20on-call%20incident%20lands%20in%20your%20lap%20at%203am&descAlignY=68&descSize=13&descColor=e2e2e2" alt="The Scenario"/>
 
 <div align="center">
 
@@ -81,7 +81,7 @@ more context and makes better decisions. By the end you'll see exactly where
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
 <a id="%EF%B8%8F-the-three-modes"></a>
-<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=8B5CF6&height=56&section=header&text=%F0%9F%97%BA%EF%B8%8F%20The%20Three%20Modes&fontColor=ffffff&fontSize=22&fontAlignY=36&desc=Same%20incident.%20Three%20retrieval%20architectures.&descAlignY=68&descSize=13&descColor=e2e2e2&animation=fadeIn" alt="The Three Modes"/>
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=6,11,20&height=56&section=header&text=The%20Three%20Modes&fontColor=ffffff&fontSize=22&fontAlignY=36&desc=Same%20incident.%20Three%20retrieval%20architectures.&descAlignY=68&descSize=13&descColor=e2e2e2" alt="The Three Modes"/>
 
 <div align="center">
 
@@ -164,7 +164,7 @@ flowchart LR
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
 <a id="0%EF%B8%8F%E2%83%A3-part-0--setup-5-min"></a>
-<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=8B5CF6&height=56&section=header&text=0%EF%B8%8F%E2%83%A3%20Part%200%20%E2%80%94%20Setup&fontColor=ffffff&fontSize=22&fontAlignY=36&desc=5%20min%20%E2%80%94%20spin%20up%20Qdrant%20%2B%20Neo4j%2C%20load%20data&descAlignY=68&descSize=13&descColor=e2e2e2&animation=fadeIn" alt="Part 0 — Setup"/>
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=6,11,20&height=56&section=header&text=Part%200%20%E2%80%94%20Setup&fontColor=ffffff&fontSize=22&fontAlignY=36&desc=5%20min%20%E2%80%94%20spin%20up%20Qdrant%20%2B%20Neo4j%2C%20load%20data&descAlignY=68&descSize=13&descColor=e2e2e2" alt="Part 0 — Setup"/>
 
 If you haven't already:
 
@@ -193,7 +193,7 @@ make browse-graph   # opens Neo4j browser at http://localhost:7474
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
 <a id="1%EF%B8%8F%E2%83%A3-part-1--plain-rag-20-min"></a>
-<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=06B6D4&height=56&section=header&text=1%EF%B8%8F%E2%83%A3%20Part%201%20%E2%80%94%20Plain%20RAG&fontColor=ffffff&fontSize=22&fontAlignY=36&desc=20%20min%20%E2%80%94%20one%20vector%20search%2C%20one%20LLM%20call%2C%20done&descAlignY=68&descSize=13&descColor=e2e2e2&animation=fadeIn" alt="Part 1 — Plain RAG"/>
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=11,6,20&height=56&section=header&text=Part%201%20%E2%80%94%20Plain%20RAG&fontColor=ffffff&fontSize=22&fontAlignY=36&desc=20%20min%20%E2%80%94%20one%20vector%20search%2C%20one%20LLM%20call%2C%20done&descAlignY=68&descSize=13&descColor=e2e2e2" alt="Part 1 — Plain RAG"/>
 
 <img src="https://img.shields.io/badge/LLM%20calls-1-06B6D4?style=flat-square&labelColor=0f0f1e"/>
 <img src="https://img.shields.io/badge/retrieval%20steps-1-06B6D4?style=flat-square&labelColor=0f0f1e"/>
@@ -243,7 +243,7 @@ Watch the TUI. You'll see exactly **one `vector` tool call** followed by **one `
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
 <a id="2%EF%B8%8F%E2%83%A3-part-2--graph-rag-20-min"></a>
-<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=8B5CF6&height=56&section=header&text=2%EF%B8%8F%E2%83%A3%20Part%202%20%E2%80%94%20Graph%20RAG&fontColor=ffffff&fontSize=22&fontAlignY=36&desc=20%20min%20%E2%80%94%20add%20Neo4j%20neighborhood%20%2B%20blast%20radius&descAlignY=68&descSize=13&descColor=e2e2e2&animation=fadeIn" alt="Part 2 — Graph RAG"/>
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=6,11,20&height=56&section=header&text=Part%202%20%E2%80%94%20Graph%20RAG&fontColor=ffffff&fontSize=22&fontAlignY=36&desc=20%20min%20%E2%80%94%20add%20Neo4j%20neighborhood%20%2B%20blast%20radius&descAlignY=68&descSize=13&descColor=e2e2e2" alt="Part 2 — Graph RAG"/>
 
 <img src="https://img.shields.io/badge/LLM%20calls-1-8B5CF6?style=flat-square&labelColor=0f0f1e"/>
 <img src="https://img.shields.io/badge/retrieval%20steps-3-8B5CF6?style=flat-square&labelColor=0f0f1e"/>
@@ -326,7 +326,7 @@ You should see the cascade visualised as a graph.
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
 <a id="3%EF%B8%8F%E2%83%A3-part-3--agentic-rag-25-min"></a>
-<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=EC4899&height=56&section=header&text=3%EF%B8%8F%E2%83%A3%20Part%203%20%E2%80%94%20Agentic%20RAG&fontColor=ffffff&fontSize=22&fontAlignY=36&desc=25%20min%20%E2%80%94%20triage%20%E2%86%92%20route%20%E2%86%92%20specialist&descAlignY=68&descSize=13&descColor=e2e2e2&animation=fadeIn" alt="Part 3 — Agentic RAG"/>
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=20,6,11&height=56&section=header&text=Part%203%20%E2%80%94%20Agentic%20RAG&fontColor=ffffff&fontSize=22&fontAlignY=36&desc=25%20min%20%E2%80%94%20triage%20%E2%86%92%20route%20%E2%86%92%20specialist&descAlignY=68&descSize=13&descColor=e2e2e2" alt="Part 3 — Agentic RAG"/>
 
 <img src="https://img.shields.io/badge/LLM%20calls-2-EC4899?style=flat-square&labelColor=0f0f1e"/>
 <img src="https://img.shields.io/badge/retrieval%20steps-4–5-EC4899?style=flat-square&labelColor=0f0f1e"/>
@@ -412,7 +412,7 @@ make tui kafka-broker        # tab 3
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
 <a id="4%EF%B8%8F%E2%83%A3-part-4--exploration-15-min"></a>
-<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=F43F5E&height=56&section=header&text=4%EF%B8%8F%E2%83%A3%20Part%204%20%E2%80%94%20Exploration&fontColor=ffffff&fontSize=22&fontAlignY=36&desc=15%20min%20%E2%80%94%20break%20things%2C%20add%20services%2C%20trace%20code&descAlignY=68&descSize=13&descColor=e2e2e2&animation=fadeIn" alt="Part 4 — Exploration"/>
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=20,16,6&height=56&section=header&text=Part%204%20%E2%80%94%20Exploration&fontColor=ffffff&fontSize=22&fontAlignY=36&desc=15%20min%20%E2%80%94%20break%20things%2C%20add%20services%2C%20trace%20code&descAlignY=68&descSize=13&descColor=e2e2e2" alt="Part 4 — Exploration"/>
 
 <details open>
   <summary><b>Try different failure points</b></summary>
@@ -517,7 +517,7 @@ graph query discovers it automatically — *you didn't change any agent code*.
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
 <a id="-recap"></a>
-<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=06B6D4&height=56&section=header&text=%F0%9F%8F%81%20Recap&fontColor=ffffff&fontSize=22&fontAlignY=36&desc=Where%20everything%20lives%20%2B%20the%20one-line%20answer&descAlignY=68&descSize=13&descColor=e2e2e2&animation=fadeIn" alt="Recap"/>
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=11,6,20&height=56&section=header&text=Recap&fontColor=ffffff&fontSize=22&fontAlignY=36&desc=Where%20everything%20lives%20%2B%20the%20one-line%20answer&descAlignY=68&descSize=13&descColor=e2e2e2" alt="Recap"/>
 
 <div align="center">
 
@@ -590,7 +590,7 @@ graph query discovers it automatically — *you didn't change any agent code*.
 <!-- ════════════════════════════════════════════════════════════════════════ -->
 
 <a id="-further-challenges"></a>
-<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=EC4899&height=56&section=header&text=%F0%9F%9A%80%20Further%20Challenges&fontColor=ffffff&fontSize=22&fontAlignY=36&desc=Keep%20going%20%E2%80%94%20reflection%2C%20fan-out%2C%20memory%2C%20LLM%20reasoning&descAlignY=68&descSize=13&descColor=e2e2e2&animation=fadeIn" alt="Further Challenges"/>
+<img width="100%" src="https://capsule-render.vercel.app/api?type=rect&color=gradient&customColorList=20,6,11&height=56&section=header&text=Further%20Challenges&fontColor=ffffff&fontSize=22&fontAlignY=36&desc=Keep%20going%20%E2%80%94%20reflection%2C%20fan-out%2C%20memory%2C%20LLM%20reasoning&descAlignY=68&descSize=13&descColor=e2e2e2" alt="Further Challenges"/>
 
 > *If you finish early or want to keep going after the workshop ends.*
 
