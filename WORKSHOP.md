@@ -117,7 +117,7 @@ more context and makes better decisions. By the end you'll see exactly where
 flowchart LR
     classDef incident fill:#0f0f1e,stroke:#F43F5E,stroke-width:2px,color:#fff
     classDef plain    fill:#0f0f1e,stroke:#06B6D4,stroke-width:2px,color:#06B6D4
-    classDef graph    fill:#0f0f1e,stroke:#8B5CF6,stroke-width:2px,color:#8B5CF6
+    classDef graphmode fill:#0f0f1e,stroke:#8B5CF6,stroke-width:2px,color:#8B5CF6
     classDef agentic  fill:#0f0f1e,stroke:#EC4899,stroke-width:2px,color:#EC4899
     classDef result   fill:#1a1a2e,stroke:#F43F5E,stroke-width:2px,color:#fff
 
@@ -133,10 +133,10 @@ flowchart LR
 
     subgraph G [" 🟣 Graph RAG "]
         direction TB
-        G1[🔍 Vector Search]:::graph
-        G2[🕸️ Neo4j · Neighborhood]:::graph
-        G3[💥 Neo4j · Blast Radius]:::graph
-        G4[🧠 LLM]:::graph
+        G1[🔍 Vector Search]:::graphmode
+        G2[🕸️ Neo4j · Neighborhood]:::graphmode
+        G3[💥 Neo4j · Blast Radius]:::graphmode
+        G4[🧠 LLM]:::graphmode
         G5([📄 Response]):::result
         G1 --> G2 --> G3 --> G4 --> G5
     end
