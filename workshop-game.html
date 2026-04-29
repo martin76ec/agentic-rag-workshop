@@ -900,12 +900,14 @@
   const isSubDone   = (id) => state.subs.includes(id);
   const isStageDone = (id) => state.stages.includes(id);
 
-  // A stage is "completed" when its sub-list is empty (just stage button)
-  // OR all subs are done AND the stage button has been pressed.
-  // Order: A1 → A2 → A3 → B4 → B5 → B6 → B7.
+  // Each track unlocks independently. Within a track, you must finish the
+  // previous part to unlock the next. Track B starts unlocked so intermediates
+  // can skip Track A.
   function isUnlocked(idx) {
-    if (idx === 0) return true;
-    return isStageDone(STAGES[idx - 1].id);
+    const stage = STAGES[idx];
+    const prevInTrack = STAGES.slice(0, idx).filter(s => s.track === stage.track);
+    if (prevInTrack.length === 0) return true;
+    return isStageDone(prevInTrack[prevInTrack.length - 1].id);
   }
 
   function stars(n) { return '★'.repeat(n) + '☆'.repeat(5 - n); }

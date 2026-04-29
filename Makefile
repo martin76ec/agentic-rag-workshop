@@ -7,7 +7,7 @@ EX_PART := $(word 1,$(subst ., ,$(EX_NUM)))
 EX_DIR  := $(if $(filter 1,$(EX_PART)),part1_plain,$(if $(filter 2,$(EX_PART)),part2_graph,$(if $(filter 3,$(EX_PART)),part3_agentic,)))
 
 help: ## Show this help
-	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[14s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-16s\033[0m %s\n", $$1, $$2}'
 
 setup: ## Full dev setup (venv + deps + Qdrant + Neo4j + .env)
 	uv venv && uv sync
@@ -56,12 +56,12 @@ exercise: ## [Track A] Run a broken exercise (e.g. make exercise 1.1)
 	@echo ""
 	@echo "═══ Exercise $(EX_NUM) — $(EX_DIR) ═══"
 	@echo ""
-	@cat exercises/$(EX_DIR)/README.md | sed -n '/^## Las /,/^## /p'
+	@awk '/^## Las /{flag=1;print;next} /^## [^L]/{flag=0} flag' exercises/$(EX_DIR)/README.md
 	@echo ""
 	@echo "─── Running tests on the broken code ───"
 	@uv run pytest exercises/$(EX_DIR)/tests.py -v --tb=short || true
 	@echo ""
-	@echo "Edit the *.py file with TODOs in exercises/$(EX_DIR)/. See its README.md for which file maps to $(EX_NUM)."
+	@echo "Edit the .py file with TODOs in exercises/$(EX_DIR)/. The README maps each fix # to its file."
 	@echo "Pistas: exercises/$(EX_DIR)/hints.md"
 
 verify: ## [Track A] Run only the tests for an exercise (e.g. make verify 1.1)
@@ -90,8 +90,11 @@ eval: ## Run retrieval-quality evaluation on the gold set (MODE=vector|graph K=5
 	uv run python -m eval.run_eval --mode $${MODE:-vector} --k $${K:-5}
 
 # ── Quality gates ───────────────────────────────────────────────────────────
-test: ## Run all tests
-	uv run pytest tests/ exercises/ -v
+test: ## Run the project test suite (excludes broken Track A exercises)
+	uv run pytest tests/ -v
+
+test-exercises: ## Run Track A exercise tests (most fail until you fix the TODOs)
+	uv run pytest exercises/ -v
 
 lint: ## Lint with ruff
 	uv run ruff check src/ tests/ exercises/ eval/

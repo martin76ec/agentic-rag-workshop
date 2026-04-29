@@ -45,7 +45,10 @@ select = ["E", "F", "I", "N", "W", "UP"]
 "exercises/**/*.py" = ["F841", "F401"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests", "exercises"]
+# `tests/` is the default suite. `exercises/` ships deliberately broken code
+# whose tests fail until learners apply the fixes — opt in with `make verify`
+# or `make test-exercises`.
+testpaths = ["tests"]
 python_files = ["test_*.py", "*_test.py", "tests.py"]
 pythonpath = ["src", "."]
 

@@ -1,11 +1,30 @@
+import os
 from unittest.mock import MagicMock, patch
 
+import pytest
 from langchain_core.messages import AIMessage
 
 from src.agents.graph import compile_triage_graph
 from src.infrastructure.models import Incident, Severity
 
 
+def _neo4j_available() -> bool:
+    if os.environ.get("SKIP_NEO4J_TESTS"):
+        return False
+    try:
+        from src.memory.config import get_neo4j_driver
+        driver = get_neo4j_driver()
+        try:
+            with driver.session() as session:
+                session.run("RETURN 1").consume()
+        finally:
+            driver.close()
+        return True
+    except Exception:
+        return False
+
+
+@pytest.mark.skipif(not _neo4j_available(), reason="Neo4j is not running.")
 class TestEndToEndIncident:
     def test_given_graph_when_invoke_with_incident_then_completes_pipeline(self):
         incident = Incident(
